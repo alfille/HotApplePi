@@ -7,7 +7,7 @@
 
 ## Answer:
 
-### See 
+### See the [Writeup](https://alfille.github.io/HotApplePi/)
 
 ----
 
