@@ -2,10 +2,12 @@
 
 ![](images/box.jpg)
 
+Make a container out of a flattened cardboard tube by folding over the specially shaped ends.
+
 ## Questions
 
 * What is the exact shape of the box once folded?
-  * How do you go from unfolded to folded shape?
+  * Mathematically, do you go from unfolded to folded shape?
   * What are the constraints on the shape of the ends?
 
 ![](images/HAP2.jpeg)
