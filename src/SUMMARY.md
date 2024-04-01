@@ -1,6 +1,6 @@
 # Summary
 - [Introduction](./introduction.md)
-- [Background](./background.md)
+- [Problem Statement](./statement.md)
 - [Box Shape](./box_shape.md)
 - [Symmetry](./symmetry.md)
 - [Dimensions](./dimensions.md)
