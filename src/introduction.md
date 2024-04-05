@@ -19,6 +19,5 @@ Unfortunately, not only are the pies now (arguably) less tasty, but the box is l
 ## Credits and License
 
 * MIT License
-* Site and code written by Paul H Alfille paul.alfille@gmail.com
+* Site and code written by Paul H Alfille paul.alfille@gmail.com 2024
 * Images from Google Images -- possibly modified for size and background
-* 

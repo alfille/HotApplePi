@@ -1,4 +1,4 @@
-# Flat Equation
+# Equation
 
 ![](images/EquationFlat.png)
 
@@ -14,4 +14,3 @@ Constraints:
 \\[f(0)=0\\]
 \\[f(W)=0\\]
 \\[0 \leq f(s) \leq L\\]
-
