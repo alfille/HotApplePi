@@ -4,8 +4,6 @@
 - [Box Shape](./box_shape.md)
 - [Symmetry](./symmetry.md)
 - [Dimensions](./dimensions.md)
-- [Curve](./curve.md)
-- [Normalized](./normalized)
 - [Equation](equation.md)
   - [Flat](./flat.md)
   - [Folded](./folded.md)
