@@ -18,7 +18,9 @@ Unfortunately, not only are the pies now (arguably) less tasty, but the box is l
 
 ## Credits and License
 
-* MIT License
-* Site and code written by Paul H Alfille paul.alfille@gmail.com
+* by Paul H Alfille, MD -- paul.alfille@gmail.com
+* [MIT License](https://tlo.mit.edu/understand-ip/exploring-mit-open-source-license-comprehensive-guide#:~:text=The%20MIT%20License%20is%20known,retained%20in%20the%20redistributed%20software.)
+* Site hosted on https://github.com/alfille/HotApplePi
 * Images from Google Images -- possibly modified for size and background
-* 
+  * Contact me if any images are not freely available
+* Content server: [mdbook](https://rust-lang.github.io/mdBook/guide/installation.html)
