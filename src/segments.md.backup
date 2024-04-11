@@ -65,7 +65,7 @@ A few points to notice:
 * There is no dependence on \\(i\\) *per se* which makes sense -- only on the two bounding endpoints \\(u\_{i-1}\\,\text{and}\\,u\_i\\)
 * The \\(\sqrt()\\) term corresponds to the change in width from folding
   * Write as: \\(\sqrt{1-N\^2 (u\_i-u\_{i-1})\^2}\\)
-  * For a valid \\(\sqrt()\\) term we need \\(\lvert u\_i-u\_{i-1} \rvert<\frac{1}{N}\\)
+  * For a valid \\(\sqrt()\\) term we need \\(\lvert u\_i-u\_{i-1} \rvert \leq \frac{1}{N}\\)
 * The terms with \\(\hat{L}\\) are essentially: \\(width\times\hat{L}\times u\_{average}\\) 
   * Proportional to length and average height
   * The quadratic terms subtract the volume lost to bending and shortening
