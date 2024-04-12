@@ -28,15 +28,27 @@ function close_enough( u, utarget ) {
 
 class Candidate {
 	constructor () {
+		this.value = 0 ;
 		this.u =  Array(Settings.N+1).fill(0.);
 		for ( let i = 1; i < Settings.N ; ++i ) {
-			this.mutate( i ) ;
+			this.mutate_i( i ) ;
 		}
 		this.valuate();
 	}
 	
-	mutate( i ) {
+	mutate_i( i ) {
 		this.u[i] = random_in_range( penumbra(this.u[i-1], this.u[i+1]) ) ;
+	}
+	
+	copy_from( C ) {
+		// copies from another Candidate, but valuation defered
+		C.u.forEach( (uu,i)=> this.u[i]=uu ) ;
+	}
+	
+	mutate_from(C) {
+		this.copy_from(C);
+		this.mutate_i(Math.floor(Math.random() * (Settings.N-1))+1) ;
+		this.valuate() ;
 	}
 	
 	valuate() {
@@ -48,7 +60,25 @@ class Candidate {
 
 class Generation {
 	constructor () {
-		
+		this.population=Array(Settings.Pop).fill(null) ;
+		this.population.forEach( (_,i)=>this.population[i]=new Candidate() ) ;
+		this.half = Math.floor(this.population.length/2) ;
+		this.resort();
 	}
+	
+	resort() {
+		this.population.sort((p1,p2)=>p2.value-p1.value);
+		this.best = this.population[0].value ;
+		console.log("Best:",this.best);
+	}
+	
+	mutate() {
+		// Make worst half a mutated copy of best
+		for ( let i = this.half; i<this.population.length; ++i ) {
+			console.log(i,i-this.half);
+			this.population[i].mutate_from(this.population[i-this.half]) ;
+		}
+		this.resort() ;
+	}		
 }
 
