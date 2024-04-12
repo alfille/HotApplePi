@@ -30,19 +30,29 @@ class Candidate {
 	constructor () {
 		this.value = 0 ;
 		this.u =  Array(Settings.N+1).fill(0.);
+		this.mutate_all() ;
+		this.valuate();
+	}
+
+	mutate_all() {
 		for ( let i = 1; i < Settings.N ; ++i ) {
 			this.mutate_i( i ) ;
 		}
-		this.valuate();
 	}
 	
 	mutate_i( i ) {
 		this.u[i] = random_in_range( penumbra(this.u[i-1], this.u[i+1]) ) ;
 	}
 	
-	copy_from( C ) {
+	copy_from_at_i( C, i ) {
 		// copies from another Candidate, but valuation defered
-		C.u.forEach( (uu,i)=> this.u[i]=uu ) ;
+		for ( let j = i; j<=Settings.N ; ++j ) {
+			this.u[j] = C.u[j] ;
+		}
+	}
+	
+	copy_from( C ) {
+		this.copy_from_at_i( C, 0 ) ;
 	}
 	
 	mutate_from(C) {
@@ -51,6 +61,26 @@ class Candidate {
 		this.valuate() ;
 	}
 	
+	sex_between( A, B ) {
+		for ( let j = 1 ; j <= Settings.N ; ++j ) {
+			if ( close_enough( A.u[j], B.u[j+1] ) ) {
+				console.log("A->B");
+				this.copy_from( A ) ;
+				this.copy_from_at_i( B, j+1 ) ;
+				this.valuate() ;
+				return ;
+			} else if ( close_enough( B.u[j], A.u[j+1] ) ) {
+				console.log("B->A");
+				this.copy_from( B ) ;
+				this.copy_from_at_i( A, j+1 ) ;
+				this.valuate() ;
+				return ;
+			}
+		}
+		this.mutate_all() ;
+		this.valuate() ;
+	}
+		
 	valuate() {
 		this.value = this.u.reduce( (acc, u, prev) =>
 			acc += (3 * Settings.Lhat * (u + this.u[prev]) - 2*(u^2+this.u[prev]^2+u*this.u[prev]))*Math.sqrt(1-(Settings.N*(u-this.u[prev]))^2)/(6*Settings.N)
@@ -75,10 +105,16 @@ class Generation {
 	mutate() {
 		// Make worst half a mutated copy of best
 		for ( let i = this.half; i<this.population.length; ++i ) {
-			console.log(i,i-this.half);
 			this.population[i].mutate_from(this.population[i-this.half]) ;
 		}
 		this.resort() ;
 	}		
+
+	procreate() {
+		for ( let i = 0 ; i < this.half ; ++i ) {
+			this.population[i+this.half].sex_between( this.population[2*i], this.population[2*i+1] ) ;
+		}
+		this.resort() ;
+	}
 }
 
