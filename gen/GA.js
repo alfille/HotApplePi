@@ -14,7 +14,7 @@
 const Settings = {
 	N:		100, 	// number of segments
 	Pop:	1000, 	// Candidates/generation
-	Lhat:	1.0 	// Relative length side to (unfolded) width
+	Lhat:	2.0 	// Relative length side to (unfolded) width
 } ;
 
 class Candidate {
