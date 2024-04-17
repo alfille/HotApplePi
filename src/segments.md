@@ -62,7 +62,7 @@ Substituting \\(\hat{f\_i}\\)
 
 Simpplfying:
 
-\\[V\_i={\frac{\lbrace 3 \hat{L} (u\_{i-1}+u\_i) -2 u\_{i}\^2-2 u\_{i-1} u\_{i}-2 u\_{i-1}\^2\rbrace  \sqrt{-N\^2 u\_{i}\^2+2 N\^2 u\_{i-1} u\_{i}-N\^2 u\_{i-1}\^2+1}}{6 N}}\\]
+\\[V\_i={\frac{\lbrace 3 \hat{L} (u\_{i-1}+u\_i) -2 ( u\_{i}\^2+ u\_{i-1} u\_{i}+ u\_{i-1}\^2)\rbrace  \sqrt{1-N\^2 (u\_{i}-u\_{i-1})\^2}}{6 N}}\\]
 
 A few points to notice:
 
