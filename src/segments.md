@@ -27,7 +27,11 @@ and
 
 \\[\hat{f'\_i}=N \Delta u\_i\\] 
 
-Unfortunately, the bare \\(u\_i\\) term makes the \\(\Delta\\) form less useful.
+Also, translating to the folded \\(x\\) dimention:
+
+\\[\Delta x\_i = \sqrt{{\Delta s\_i}\^2-{\Delta u\_i}\^2} = \sqrt{\frac{1}{N\^2}-{\Delta u\_i}\^2}\\]
+
+Unfortunately, the bare \\(u\_i\\) term makes the \\(\Delta\\) form less useful in the volume calculation.
 
 ## Volume
 

@@ -27,6 +27,10 @@ and
 
 \\[\hat{f'\_i}=N \Delta u\_i\\] 
 
+Also, translating to the folded \\(x\\) dimention:
+
+\\[\Delta x\_i = \sqrt{{\Delta s\_i}\^2-{\Delta u\_i}\^2} = \sqrt{\frac{1}{N\^2}-{\Delta u\_i}\^2}\\]
+
 Unfortunately, the bare \\(u\_i\\) term makes the \\(\Delta\\) form less useful.
 
 ## Volume
@@ -63,9 +67,9 @@ Simpplfying:
 A few points to notice:
 
 * There is no dependence on \\(i\\) *per se* which makes sense -- only on the two bounding endpoints \\(u\_{i-1}\\,\text{and}\\,u\_i\\)
-* The \\(\sqrt()\\) term corresponds to the change in width from folding
+* The \\(sqrt()\\) term corresponds to the change in width from folding
   * Write as: \\(\sqrt{1-N\^2 (u\_i-u\_{i-1})\^2}\\)
-  * For a valid \\(\sqrt()\\) term we need \\(\lvert u\_i-u\_{i-1} \rvert \leq \frac{1}{N}\\)
+  * Constraint that \\(\lvert u\_i-u\_{i-1} \rvert<\frac{1}{N}\\)
 * The terms with \\(\hat{L}\\) are essentially: \\(width\times\hat{L}\times u\_{average}\\) 
   * Proportional to length and average height
   * The quadratic terms subtract the volume lost to bending and shortening
