@@ -18,7 +18,7 @@ const Settings = {
 	population:	1000, 	// Candidates/generation
 	Lhat:	.5, 	// Relative length side to (unfolded) width
 	generations:	100,	// short timeline
-	era:			3,		// number of generations 
+	era:			30,		// number of generations 
 } ;
 
 class Candidate {
@@ -101,9 +101,17 @@ class Candidate {
 	}
 		
 	valuate() {
-		this.value = this.u.reduce( (acc, u, prev) =>
-			acc += (3 * Settings.Lhat * (u + this.u[prev]) - 2*(u^2+this.u[prev]^2+u*this.u[prev]))*Math.sqrt(1-(Settings.N*(u-this.u[prev]))^2)/(6*Settings.N)
-			) ;
+		let val_end = 0 ;
+		let val_L = 0 ;
+		let u0 = u[0] ;
+		const N2 = Settings.N**2 ;
+		u.slice(1).forEach( u1 => {
+			const sq = Math.sqrt(1-N2*(u1-u0)**2);
+			val_L += sq * (u1+u0) ;
+			val_end += u1**2 + u1*u0 + u0**2 ;
+			u0 = u1 ;
+		});
+		this.value = ( 3*Settings.Lhat*val_L - 2*val_end ) / ( 6 * Settings.N) ;
 	}
 }		 
 
@@ -222,7 +230,7 @@ class Offload {
 	
 	message( evt ) {
 		// called-back -- must use explicit object
-		console.log( "Window", evt, evt.data.seq );
+		//console.log( "Window", evt, evt.data.seq );
 		if ( evt.data.seq == offload.seq ) {
 			offload.more.value= offload.era_counter * Settings.generations ;
 			// process data;
@@ -249,32 +257,77 @@ onload = () => {
 class CanvasType {
 	constructor(name) {
 		this.canvas = document.getElementById(name) ;
-		this.ctx=this.canvas.getContext("2d");
+		this.ctx=this.canvas.getContext("2d",{willReadFrequently:true,});
+		this.startX = 10 ;
+		this.startY = 10 ;
+		this.lengX = this.canvas.width - 2* this.startX ;
+		this.lengY = this.canvas.height - 2* this.startY ;
+		this.ctx.globalAlpha = 1.0 ;
 	}
 	
 	clear() {
-		this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height) ;
+		this.ctx.fillStyle = "white" ;
+		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height) ;
+		this.ctx.strokeStyle = "lightgray" ;
+		for ( let i = 0; i <= 1 ; i += .1 ) {
+			// grid
+			this.ctx.beginPath() ;
+			this.ctx.moveTo( this.pX(0),this.pY(i) ) ;
+			this.ctx.lineTo( this.pX(1),this.pY(i) ) ;
+			this.ctx.stroke() ;
+			this.ctx.beginPath() ;
+			this.ctx.moveTo( this.pX(i),this.pY(0) ) ;
+			this.ctx.lineTo( this.pX(i),this.pY(1) ) ;
+			this.ctx.stroke() ;
+		}
+		this.copyImg() ;
 	}
 	
+	pX( x ) {
+		return x*this.lengX + this.startX ;
+	} 
+	
+	pY( y ) {
+		return (1-y)*this.lengY + this.startY ;
+	}
+
 	curve(X,Y) {
+		this.pasteImg() ;
 		//console.log(X,Y);
-		const startX = 20 ;
-		const startY = 20 ;
-		const lengX = this.canvas.width - 2* startX ;
-		const lengY = this.canvas.height - 2* startY ;
+
+		// pass 1 in black
 		this.ctx.beginPath() ;
-		this.ctx.moveTo(startX,startY);
+		this.ctx.strokeStyle="black" ;
+		this.ctx.lineWidth = 1 ;
+		this.ctx.moveTo(this.pX(X[0]),this.pY(Y[0]));
 		for ( let i = 1 ; i <= Settings.N; ++i ) {
-			this.ctx.lineTo( 
-				X[i]*lengX+startX, 
-				Y[i]*lengY+startY 
-			) ;
+			this.ctx.lineTo( this.pX(X[i]), this.pY(Y[i]) ) ;
+		}
+		this.ctx.stroke() ;
+
+		this.copyImg() ;
+
+		// pass 2 in red
+		this.ctx.beginPath() ;
+		this.ctx.strokeStyle="red";
+		this.ctx.lineWidth = 4 ;
+		this.ctx.moveTo(this.pX(X[0]),this.pY(Y[0]));
+		for ( let i = 1 ; i <= Settings.N; ++i ) {
+			this.ctx.lineTo( this.pX(X[i]), this.pY(Y[i]) ) ;
 		}
 		this.ctx.stroke() ;
 	}
 	
 	add_data( u ) {
 		this.curve( this.Xs( u ), u ) ;
+	}
+	
+	copyImg () {
+		this.imgData = this.ctx.getImageData(this.startX,this.startY,this.lengX,this.lengY);
+	}
+	
+	pasteImg () {
+		this.ctx.putImageData( this.imgData,this.startX,this.startY);
 	}
 }
 
@@ -302,6 +355,6 @@ class CanvasFolded extends CanvasType {
 			temp += dx ;
 			X.push(temp) ;
 		}
-		return X.map( x => x+ (1-temp)/2 ) ; // centering
+		return X.map( x => x + (1-temp)/2 ) ; // centering
 	}
 }

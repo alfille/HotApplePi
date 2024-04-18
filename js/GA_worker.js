@@ -98,9 +98,11 @@ class Candidate {
 	}
 		
 	valuate() {
-		this.value = this.u.reduce( (acc, u, prev) =>
-			acc += (3 * Settings.Lhat * (u + this.u[prev]) - 2*(u^2+this.u[prev]^2+u*this.u[prev]))*Math.sqrt(1-(Settings.N*(u-this.u[prev]))^2)/(6*Settings.N)
-			) ;
+		let val = 0 ;
+		for ( let i = 1 ; i <= Settings.N; ++i ) {
+			val += ( 3*(this.u[i]+this.u[i-1]) - 2*(this.u[i]**2+this.u[i-1]**2+this.u[i]*this.u[i-1]))* Math.sqrt(1-Settings.N**2*(this.u[i]-this.u[i-1])**2) ;
+		}
+		this.value = val / ( 6 * Settings.N) ;
 	}
 }		 
 
@@ -157,7 +159,7 @@ class Run {
 	
 	run() {
 		postMessage( {volume:this.gen.volume(), u:this.gen.profile(), seq:this.seq } ) ;
-		console.log("Worker:Send message",Settings.N);
+		//console.log("Worker:Send message",Settings.N);
 		for ( let g = 0 ; g<Settings.generations ; ++g ) {
 			this.gen.mutate() ;
 			this.gen.procreate() ;
@@ -169,7 +171,7 @@ var run = new Run() ;
 
 onmessage = ( evt ) => {
 	if ( evt.isTrusted ) {
-		console.log("Worker",evt);
+		//console.log("Worker",evt);
 		Object.assign( Settings, evt.data ) ;
 		run.seq = evt.data.seq ;
 		if ( evt.data.start ) {
