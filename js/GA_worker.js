@@ -161,6 +161,7 @@ class Run {
 		this.gen = null ;
 		this.flat = null;
 		this.folded = null ;
+		this.W = new Worker("Plotter.js") ; // subworker
 	}
 	
 	start() {
@@ -177,8 +178,7 @@ class Run {
 			this.gen.procreate() ;
 		}
 		postMessage( {volume:this.gen.volume(), seq:this.seq } ) ;
-		this.flat.add_data(this.gen.profile()) ;
-		this.folded.add_data(this.gen.profile()) ;
+		this.W.postMessage({seq:this.seq,type:"continue",u:this.gen.profile()});
 	}
 }
 
@@ -189,16 +189,15 @@ onmessage = ( evt ) => {
 		console.log("Worker gets: ",evt.data.type);
 		switch (evt.data.type) {
 			case "Flat":
-				run.flat = new CanvasFlat(evt.data.canvas) ;
-				break ;
 			case "Folded":
-				run.folded = new CanvasFolded(evt.data.canvas) ;
+				run.W.postMessage({canvas:evt.data.canvas,type:evt.data.type},[evt.data.canvas]) ;
 				break ;
 			case "start":
 				Object.assign( Settings, evt.data ) ;
+				run.W.postMessage(evt.data);
 				run.seq = evt.data.seq ;
 				run.start() ;
-				run.run() ; 
+				run.run() ;
 				break ;
 			case "continue":
 				Object.assign( Settings, evt.data ) ;
