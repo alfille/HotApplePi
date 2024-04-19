@@ -1,6 +1,6 @@
 // Javascript genetic algorithm for solving best volume
 
-// find segment lengths to solve Paul Alfille's HotPaalePi problem
+// find segment lengths to solve Paul Alfille's HotApplePi problem
 // Javascript E6+ code
 
 // See https://github.com/alfille/HotApplePi
