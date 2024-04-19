@@ -42,25 +42,30 @@ class Candidate {
 	}
 	
 	compare_values( s , v0 , trial ) {
+		// test current value against a candidate replacement u[s]
 		if ( trial == this.u[s] ) {
 			return false ;
 		}
-		const v1 = local_val( s, trial ) ;
+		const v1 = this.local_val( s, trial ) ;
 		if ( v1 <= v0 ) {
+			// candidate no better
 			return false ;
 		}
+		// candidate better, change and use this change as delta
 		this.delta[s] = trial - this.u[s] ;
 		this.u[s] = trial ;
 		return true ;
 	}
 	
 	gradient() {
+		// Alter all values to increase return, each in turn
 		for ( let s = 1; s < Settings.N ; ++s ) {
 			this.improve_slot(s) ;
 		}
 	}
 	
 	improve_slot(s) {
+		// test changing current value to either max possible, min possible, or some delta. Adjust delta
 		const NN = 1/Settings.N ;
 		const min = Math.max(             0, this.u[s-1]-NN, this.u[s+1]-NN ) ;
 		const max = Math.min( Settings.Lhat, this.u[s-1]+NN, this.u[s+1]+NN ) ;
@@ -80,6 +85,7 @@ class Candidate {
 		if ( (d < max) && this.compare_values(s, v0, d ) ) {
 			return;
 		}
+		// no better candidate. Make delta smaller next time
 		this.delta[s] /= 2 ;
 	}
 		
