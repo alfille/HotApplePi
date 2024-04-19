@@ -23,6 +23,7 @@ class Candidate {
 	constructor () {
 		this.value = 0 ; // calculated volume (Ignores constant multiplier)
 		this.u =  Array(Settings.N+1).fill(0.); // Segment lengths
+		this.delta =  Array(Settings.N+1).fill(1/Settings.N); // Segment lengths
 		this.mutate_all() ;
 		this.valuate();
 	}
@@ -40,63 +41,46 @@ class Candidate {
 		this.u[i] = Math.random() * ( max-min ) + min ;
 	}
 	
-	copy_at_slot( C, i ) {
-		// copies from another Candidate, but valuation defered
-		for ( let j = i; j<=Settings.N ; ++j ) {
-			this.u[j] = C.u[j] ;
+	compare_values( s , v0 , trial ) {
+		if ( trial == this.u[s] ) {
+			return false ;
+		}
+		const v1 = local_val( s, trial ) ;
+		if ( v1 <= v0 ) {
+			return false ;
+		}
+		this.delta[s] = trial - this.u[s] ;
+		this.u[s] = trial ;
+		return true ;
+	}
+	
+	gradient() {
+		for ( let s = 1; s < Settings.N ; ++s ) {
+			this.improve_slot(s) ;
 		}
 	}
 	
-	copy( C ) {
-		this.copy_at_slot( C, 0 ) ;
-	}
-	
-	random_slot() {
-		return Math.floor(Math.random() * (Settings.N-1))+1 ;
-	}
-	
-	mutate_from(C) {
-		this.copy(C);
-		this.mutate_slot(this.random_slot()) ;
-		this.mutate_slot(this.random_slot()) ;
-		this.mutate_slot(this.random_slot()) ;
-		this.valuate() ;
-	}
-	
-	close_enough( u1, u2 ) {
-		// within proper distance to utarget
+	improve_slot(s) {
 		const NN = 1/Settings.N ;
-		return Math.abs(u1-u2) < NN ;
-	}
-	
-	sex_between( A, B ) {
-		// a little complicated:
-		// Copy part of A and rest of B
-		// make sure transition point is random but also legal ("close_enough for a valid derivative).
-		// So start at a random spot and start testing for close_enough
-		// Copy direction depends on which way is close enough.
-		// If no possible transition, just mutate
+		const min = Math.max(             0, this.u[s-1]-NN, this.u[s+1]-NN ) ;
+		const max = Math.min( Settings.Lhat, this.u[s-1]+NN, this.u[s+1]+NN ) ;
+		const v0 = this.local_val(s,this.u[s]) ;
 		
-		const start = this.random_slot() ;
-		for ( let k = 1 ; k <= Settings.N ; ++k ) {
-			const j = (k+start-1) % Settings.N + 1 ; // need to shift to avoid endpoints
-			if ( this.close_enough( A.u[j], B.u[j+1] ) ) {
-				//console.log("A->B");
-				this.copy( A ) ;
-				this.copy_at_slot( B, j+1 ) ;
-				this.valuate() ;
-				return ;
-			} else if ( this.close_enough( B.u[j], A.u[j+1] ) ) {
-				//console.log("B->A");
-				this.copy( B ) ;
-				this.copy_at_slot( A, j+1 ) ;
-				this.valuate() ;
-				return ;
-			}
+		if ( this.compare_values( s, v0, max )  ){
+			return;
 		}
-		//console.log("Mutate");
-		this.mutate_all() ;
-		this.valuate() ;
+		if ( this.compare_values( s, v0, min ) ) {
+			return;
+		}
+		let d = this.u[0]+this.delta[s] ;
+		if ( (d < max) && this.compare_values(s, v0, d ) ) {
+			return;
+		}
+		d = this.u[0]-this.delta[s] ;
+		if ( (d < max) && this.compare_values(s, v0, d ) ) {
+			return;
+		}
+		this.delta[s] /= 2 ;
 	}
 		
 	valuate() {
@@ -112,20 +96,34 @@ class Candidate {
 		});
 		this.value = ( 3 * Settings.Lhat * val_L  - 2 * val_E ) / ( 6 * Settings.N ) ;
 	}
+
+	slot_val(s) {
+		// ignores constant multipliers
+		const u0 = this.u[s-1] ;
+		const u1 = this.u[s] ;
+		return ( 3 * (u0+u1) * Settings.Lhat - 2 * ( u1**2+u0**2 + u0*u1 ) ) * Math.sqrt( 1 - ( (u1-u0)/Settings.N )**2 ) ;
+	}
+	
+	local_val(s,v) {
+		const vsave = this.u[s] ;
+		this.u[s] = v ;
+		const vret = this.slot_val(s)+this.slot_val(s+1) ;
+		this.u[s] = vsave ;
+		return vret ;
+	}
 }		 
+
+
 
 class Generation {
 	// Holds a list of candidates and manages population selection
 	constructor () {
-		this.population=Array(Settings.Pop).fill(null) ;
-		this.population.forEach( (_,i)=>this.population[i]=new Candidate() ) ;
-		this.half = Math.floor(this.population.length/2) ;
+		this.population=[new Candidate()];
 		this.resort();
 	}
 	
 	resort() {
 		// reorder the list of candidates by fitness
-		this.population.sort((p1,p2)=>p2.value-p1.value);
 		this.best = this.population[0].value ;
 	}
 	
@@ -139,21 +137,10 @@ class Generation {
 	}
 	
 	mutate() {
-		// Make worst half of population a mutated copy of best half
-		for ( let i = this.half; i<this.population.length; ++i ) {
-			this.population[i].mutate_from(this.population[i-this.half]) ;
-		}
+		this.population[0].gradient() ;
 		this.resort() ;
 	}		
 
-	procreate() {
-		// genetically mix with preference for most fit
-		// pairswise best replace lower half, and best children get mixed into procreators
-		for ( let i = 0 ; i < this.half ; ++i ) {
-			this.population[i+this.half].sex_between( this.population[2*i], this.population[2*i+1] ) ;
-		}
-		this.resort() ;
-	}
 }
 
 class Run {
@@ -171,7 +158,6 @@ class Run {
 		//console.log("Worker:Send message",Settings.N);
 		for ( let g = 0 ; g<Settings.generations ; ++g ) {
 			this.gen.mutate() ;
-			this.gen.procreate() ;
 		}
 		// send note back to master
 		postMessage( {volume:this.gen.volume(), seq:this.seq } ) ;

@@ -24,7 +24,8 @@ const Settings = {
 class Offload {
 	constructor() {
 		this.seq = 0 ; // sequence to keep track of changes
-		this.W = new Worker("js/GA_worker.js") ;
+//		this.W = new Worker("js/GA_worker.js") ;
+		this.W = new Worker("js/Gradient_worker.js") ;
 		this.W.addEventListener("message", this.message, false ) ;
 		this.showParameters() ;
 		this.new_start = true ;
@@ -98,7 +99,7 @@ class Offload {
 
 onload = () => {
 	offload = new Offload() ;
-	console.log("new offload");
+	//console.log("new offload");
 	offload.run() ;
 }
 

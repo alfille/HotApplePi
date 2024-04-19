@@ -39,7 +39,7 @@ var run = new Run() ;
 
 onmessage = ( evt ) => {
 	if ( evt.isTrusted ) {
-		console.log("Worker gets: ",evt.data.type);
+		//console.log("Worker gets: ",evt.data.type);
 		switch (evt.data.type) {
 			case "Flat":
 				run.flat = new CanvasFlat(evt.data.canvas) ;
