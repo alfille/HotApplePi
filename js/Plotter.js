@@ -31,7 +31,9 @@ class Run {
 	
 	run(u) {
 		this.flat.add_data(u) ;
+		//console.log("flat add");
 		this.folded.add_data(u) ;
+		//console.log("folded add",u);
 	}
 }
 
@@ -153,6 +155,7 @@ class CanvasFolded extends CanvasType {
 		let u0 = u[0] ;
 		const X = u.slice(1).map( u1 => {
 			sum += Math.sqrt(N1-(u1-u0)**2) ;
+			//console.log(sum);
 			u0=u1;
 			return sum;
 		});

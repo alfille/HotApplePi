@@ -16,16 +16,16 @@ var cookie = null ;
 
 const Settings = {
 	N:		100, 	// number of segments
-	population:	500, 	// Candidates/generation
-	Lhat:	1.5, 	// Relative length side to (unfolded) width
-	generations:	100,	// short timeline
+	population:	1, 	// Candidates/generation
+	Lhat:	.5, 	// Relative length side to (unfolded) width
+	generations:	50,	// short timeline
 	era:			100,		// number of generations 
 } ;
 
 class Offload {
 	constructor() {
 		this.seq = 0 ; // sequence to keep track of changes
-		this.W = new Worker("js/GA_worker.js") ;
+		this.W = new Worker("js/Gradient_worker.js") ;
 		this.showParameters() ;
 		this.new_start = true ;
 		this.W.addEventListener("message", this.message, false ) ;
@@ -115,33 +115,3 @@ class WorkerCanvas {
 		W.postMessage({ canvas: this.transferCanvas, type:this.name},[this.transferCanvas]);
 	}
 }
-
-class Cookie { //convenience class
-    set( cname, value ) {
-        // From https://www.tabnine.com/academy/javascript/how-to-set-cookies-javascript/
-		Settings[cname] = value;
-		let date = new Date();
-		date.setTime(date.getTime() + (400 * 24 * 60 * 60 * 1000)); // > 1year
-		document.cookie = `${cname}=${encodeURIComponent(JSON.stringify(value))}; expires=${date.toUTCString()}; SameSite=None; Secure; path=/`;
-    }
-
-    get( cname ) {
-        const name = `${cname}=`;
-        let ret = null;
-        decodeURIComponent(document.cookie).split('; ').filter( val => val.indexOf(name) === 0 ).forEach( val => {
-            try {
-                ret = JSON.parse( val.substring(name.length) );
-                }
-            catch(err) {
-                ret =  val.substring(name.length);
-                }
-        });
-        if ( ret !== null ) {
-			Settings[cname] = ret;
-			return ret;
-		} else {
-			return Settings[cname] ;
-		}
-    }
-}
-cookie = new Cookie() ;

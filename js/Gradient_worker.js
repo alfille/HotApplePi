@@ -21,11 +21,8 @@ const Settings = {
 class Candidate {
 	// Single sequence
 	constructor () {
-		this.value = 0 ; // calculated volume (Ignores constant multiplier)
 		this.u =  Array(Settings.N+1).fill(0.); // Segment lengths
-		this.delta =  Array(Settings.N+1).fill(1/Settings.N); // Segment lengths
 		this.mutate_all() ;
-		this.valuate();
 	}
 
 	mutate_all() {
@@ -41,22 +38,6 @@ class Candidate {
 		this.u[i] = Math.random() * ( max-min ) + min ;
 	}
 	
-	compare_values( s , v0 , trial ) {
-		// test current value against a candidate replacement u[s]
-		if ( trial == this.u[s] ) {
-			return false ;
-		}
-		const v1 = this.local_val( s, trial ) ;
-		if ( v1 <= v0 ) {
-			// candidate no better
-			return false ;
-		}
-		// candidate better, change and use this change as delta
-		this.delta[s] = trial - this.u[s] ;
-		this.u[s] = trial ;
-		return true ;
-	}
-	
 	gradient() {
 		// Alter all values to increase return, each in turn
 		for ( let s = 1; s < Settings.N ; ++s ) {
@@ -65,28 +46,26 @@ class Candidate {
 	}
 	
 	improve_slot(s) {
-		// test changing current value to either max possible, min possible, or some delta. Adjust delta
+		// test changing current value to either max possible, min possible, or randoms
 		const NN = 1/Settings.N ;
 		const min = Math.max(             0, this.u[s-1]-NN, this.u[s+1]-NN ) ;
 		const max = Math.min( Settings.Lhat, this.u[s-1]+NN, this.u[s+1]+NN ) ;
-		const v0 = this.local_val(s,this.u[s]) ;
 		
-		if ( this.compare_values( s, v0, max )  ){
-			return;
+		const v0 = this.two_slots(s,this.u[s]) ; // reference value
+		
+		if ( this.two_slots( s, max ) > v0 ) {
+			this.u[s] = max ;
+		} else if ( this.two_slots( s, min ) > v0 ) {
+			this.u[s] = min ;
+		} else {
+			const r0 = Math.random() * (max-min) + min ;
+			const r1 = Math.random() * (max-min) + min ;
+			if ( this.two_slots( s, r0 ) > v0 ) {
+				this.u[s] = r0 ;
+			} else if ( this.two_slots( s, r1 ) > v0 ) {
+				this.u[s] = r1 ;
+			}
 		}
-		if ( this.compare_values( s, v0, min ) ) {
-			return;
-		}
-		let d = this.u[0]+this.delta[s] ;
-		if ( (d < max) && this.compare_values(s, v0, d ) ) {
-			return;
-		}
-		d = this.u[0]-this.delta[s] ;
-		if ( (d < max) && this.compare_values(s, v0, d ) ) {
-			return;
-		}
-		// no better candidate. Make delta smaller next time
-		this.delta[s] /= 2 ;
 	}
 		
 	valuate() {
@@ -100,22 +79,16 @@ class Candidate {
 			val_L += sq*(u0+u1) ;
 			u0 = u1 ;
 		});
-		this.value = ( 3 * Settings.Lhat * val_L  - 2 * val_E ) / ( 6 * Settings.N ) ;
+		return ( 3 * Settings.Lhat * val_L  - 2 * val_E ) / ( 6 * Settings.N ) ;
 	}
 
-	slot_val(s) {
+	slot_val(u0,u1) {
 		// ignores constant multipliers
-		const u0 = this.u[s-1] ;
-		const u1 = this.u[s] ;
-		return ( 3 * (u0+u1) * Settings.Lhat - 2 * ( u1**2+u0**2 + u0*u1 ) ) * Math.sqrt( 1 - ( (u1-u0)/Settings.N )**2 ) ;
+		return ( 3 * (u0+u1) * Settings.Lhat - 2 * ( u1**2 + u0**2 + u0*u1 ) ) * Math.sqrt( 1 - ( (u1-u0)*Settings.N )**2 ) ;
 	}
 	
-	local_val(s,v) {
-		const vsave = this.u[s] ;
-		this.u[s] = v ;
-		const vret = this.slot_val(s)+this.slot_val(s+1) ;
-		this.u[s] = vsave ;
-		return vret ;
+	two_slots(s,trial_u) {
+		return this.slot_val( this.u[s-1], trial_u ) + this.slot_val( trial_u, this.u[s+1] ) ;
 	}
 }		 
 
@@ -125,16 +98,10 @@ class Generation {
 	// Holds a list of candidates and manages population selection
 	constructor () {
 		this.population=[new Candidate()];
-		this.resort();
-	}
-	
-	resort() {
-		// reorder the list of candidates by fitness
-		this.best = this.population[0].value ;
 	}
 	
 	volume() {
-		return 4 * this.best ;
+		return 4 * this.population[0].valuate() ;
 	}
 	
 	profile() {
@@ -144,7 +111,6 @@ class Generation {
 	
 	mutate() {
 		this.population[0].gradient() ;
-		this.resort() ;
 	}		
 
 }
@@ -190,6 +156,7 @@ onmessage = ( evt ) => {
 				run.run() ;
 				break ;
 			case "continue":
+				//console.log("continue");
 				Object.assign( Settings, evt.data ) ;
 				run.seq = evt.data.seq ;
 				run.run() ; 
