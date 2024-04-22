@@ -11,5 +11,6 @@
   - [Volume](./volume.md)
   - [Extremal](./extremal.md)
 - [Line Segments](./segments.md)
+  - [Maximum - descrete case](./seg_max.md)
 - [Arc](./arc.md)
 
