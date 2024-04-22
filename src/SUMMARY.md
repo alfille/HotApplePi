@@ -10,7 +10,6 @@
   - [Edge](./edge.md)
   - [Volume](./volume.md)
   - [Extremal](./extremal.md)
-- [Simple Wedge](./simplewedge.md)
 - [Line Segments](./segments.md)
 - [Arc](./arc.md)
 

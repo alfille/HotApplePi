@@ -22,7 +22,7 @@ Let's check our work by confirming that the crease length is the same flat and f
 
 Thus
 
-\\[Edge=\int\_{0}\^{1}\sqrt{{d\hat{x}}\^2+{d\hat{y}}\^2+{d\hat{z}}\^2}=\int\_{0}\^{1} \sqrt{1+{\hat{f'}(\sigma)}\^2}\\,d\sigma\\]
+\\[Edge=\int\_{0}\^{1}\sqrt{{d\hat{x}}\^2+{d\hat{y}}\^2+{d\hat{z}}\^2}=\int\_{0}\^{1}\sqrt{({d\hat{x}}\^2+{d\hat{z}}\^2)+{d\hat{y}}\^2}=\int\_{0}\^{1} \sqrt{1+{\hat{f'}(\sigma)}\^2}\\,d\sigma\\]
 
 QED!
 

@@ -22,13 +22,13 @@ The two ends must match (**A**) so that the cross section is constant (**B**s).
 
 ### Simplified problem
 
-Taking advantage of all the symmetries, we can analuze just the quarter panel in red.
+Taking advantage of all the symmetries, we can analyze just the quarter panel in red.
 
 ![](images/symmetryD.png)
 
 ### Parameters
 
-From the quarter panel, it is clear that the only adjustable parameters are **L**ength, **W**idth, and curve **f**.
+From the quarter panel, it is clear that the only adjustable parameters are **L**ength, **W**idth, and the curve **f**.
 
 ![](images/symmetryE.png)
 

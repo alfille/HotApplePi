@@ -35,7 +35,7 @@ Now on the surface, in parametric form:
 \\[\text{So}\quad d\hat{z}=\hat{f'}(\hat{s})\\,d\hat{s}\\]
 \\[\text{Thus}\quad {d\hat{x}}\^2 = \lbrace 1 - {\hat{f'}(\hat{s})}\^2 \rbrace \\, {d\hat{s}}\^2\\]
 
-Note that this add a constraint:
+Note that this adds a constraint:
 
 \\[\lvert{f'(s)}\rvert < 1\quad\text{i.e.}\\,<45\^{\circ}\\]
 
