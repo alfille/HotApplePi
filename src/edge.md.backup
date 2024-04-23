@@ -1,0 +1,28 @@
+# Edge
+
+Let's check our work by confirming that the crease length is the same flat and folded.
+
+## Flat
+
+![](images/ruler_flat.jpg)
+
+\\[Edge=\int\_{0}\^{1}\sqrt{{d\sigma}\^2+{d\hat{f}(\sigma)}\^2}=\int\_{0}\^{1} \sqrt{1+{\hat{f'}(\sigma)}\^2}\\,d\sigma\\]
+
+## Folded
+
+![](images/ruler_folded.jpg)
+
+\\[Edge=\int\_{0}\^{1}\sqrt{{d\hat{x}}\^2+{d\hat{y}}\^2+{d\hat{z}}\^2}\\]
+
+[We know that](folded.md)
+
+\\[{d\hat{x}}\^2+{d\hat{z}}\^2={d\hat{s}}\^2\\]
+\\[\text{And}\quad d\hat{y}=-\hat{f'}(\hat{s})\\,d\hat{s}\\]
+\\[\text{So}\quad {d\hat{y}}\^2={\hat{f'}(\hat{s})}\^2\\,{d\hat{s}}\^2\\]
+
+Thus
+
+\\[Edge=\int\_{0}\^{1}\sqrt{{d\hat{x}}\^2+{d\hat{y}}\^2+{d\hat{z}}\^2}=\int\_{0}\^{1}\sqrt{({d\hat{x}}\^2+{d\hat{z}}\^2)+{d\hat{y}}\^2}\int\_{0}\^{1}\sqrt{({d\sigma}\^2)+{\hat{f'}(\sigma)}\^2 {d\sigma\^2}=\int\_{0}\^{1} \sqrt{1+{\hat{f'}(\sigma)}\^2}\\,d\sigma\\]
+
+QED!
+
