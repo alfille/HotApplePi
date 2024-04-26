@@ -11,97 +11,24 @@
 //   u[0] = u[N] = 0
 //   | u[i] - u[i+1] | <= 1/N
 
-var offload = null ;
+var design = null ;
 
-class Offload {
+class Design {
 	constructor() {
-		this.seq = 0 ; // sequence to keep track of changes
-		this.W = new Worker("js/Gradient_worker.js") ;
-		this.showParameters() ;
-		this.new_start = true ;
-		this.W.addEventListener("message", this.message, false ) ;
-		this.more = document.getElementById("More") ;
-		this.down = document.getElementById("Download") ;
-		this.volume = document.getElementById("Volume") ;
-		[ "Flat", "Folded" ] .forEach( f => {
-			const c = new WorkerCanvas( f ) ;
-			c.send(this.W) ;
-		});
-	}
-	
-	showParameters() {
-		Object.entries(Settings).forEach( e => {
-			const id = document.getElementById( e[0] ) ;
-			if ( id !== null ) {
-				id.value = e[1] ;
-			}
-		});
-	}
-	
-	getParameters() {
-		Object.entries(Settings).forEach( e => {
-			const id = document.getElementById( e[0] ) ;
-			if ( id !== null ) {
-				Settings[e[0]] = Number(id.value) ;
-			}
-		});
-		this.new_start = true ;
-		this.run() ;
-	}
-		
-	run() {
-		this.more.disabled=true ;
-		this.down.disabled=true ;
-		if ( this.new_start ) {
-			this.volume.value=Number(0).toFixed(4) ;
-			this.seq += 1 ;
-			this.era_counter = 0 ;
-			this.W.postMessage(Object.assign(Object.assign({},Settings),{type:"start",  seq:this.seq})) ;
-			this.new_start = false ;
-			this.era = Settings.era ;
-		} else {
-			this.era_counter += 1 ;
-			this.W.postMessage(Object.assign(Object.assign({},Settings),{type:"continue", seq:this.seq})) ;
-		}
-	}
-	
-	update_era() {
-		offload.era += Settings.era ;
-		offload.run() ;
-	}
-	
-	download() {
-		this.W.postMessage({type:"download",seq:this.seq});
-	}
-	
-	message( evt ) {
-		// called-back -- must use explicit object
-		//console.log( "Window", evt, evt.data.seq );
-		if ( evt.data.seq == offload.seq ) {
-			offload.volume.value = evt.data.volume.toFixed(4) ;
-			offload.more.value= offload.era_counter * Settings.generations ;
-			// process data;
-			if ( offload.era_counter >= offload.era ) {
-				// this era for this current seq is done, don't send message until new Settings
-				offload.more.value= `${offload.era_counter * Settings.generations} More...` ;
-				offload.more.disabled=false ;
-				offload.down.disabled=false ;
-				return ;
-			}
-			offload.run() ;
-		} else if ( evt.data.seq == -1 ) {
-			const c = new CSV() ;
-			c.download(evt.data.volume,evt.data.u) ;
-		} else {
-			offload.run() ;
-		}		
+		this.canvas = document.getElementById("Design");
+		this.width = this.canvas.width ;
+		this.Xleng = this.width - 20 ;
+		this.height = this.canvas.height ;
+		this.Yleng = this.height - 20 ;
+		this.ctx = this.canvas.getContext("2d") ;
 	}
 }
 
+
 onload = () => {
-	offload = new Offload() ;
+	design = new Design() ;
 	//console.log("new offload");
-	offload.run() ;
+	design.run() ;
 }
 
 class WorkerCanvas {
