@@ -13,22 +13,227 @@
 
 var design = null ;
 
-class Design {
-	constructor() {
-		this.canvas = document.getElementById("Design");
-		this.width = this.canvas.width ;
-		this.Xleng = this.width - 20 ;
-		this.height = this.canvas.height ;
-		this.Yleng = this.height - 20 ;
+class Graph {
+	constructor(name) {
+		this.canvas = document.getElementById(name);
+		this.Xleng = this.canvas.width - 20 ;
+		this.Yleng = this.canvas.height - 20 ;
+		this.segnumber = 200 ;
 		this.ctx = this.canvas.getContext("2d") ;
+		this.Xend=this.screenX(1);
+		this.Yend=this.screenY(0);
+	}
+
+	screenX(x) {
+		// point to screen
+		return 10+x*this.Xleng;
+	}
+	
+	screenY(y) {
+		// point to screen
+		return 10+(1-2*y)*this.Yleng;
+	}
+	
+	pX(x) {
+		// screen to point
+		return (x-10)/this.Xleng ;
+	}
+	
+	pY(y) {
+		// screen to point
+		return .5+.5*((10-y)/this.Yleng);
+	}
+	
+	clear() {
+		this.ctx.strokeStyle="black";
+		this.ctx.fillStyle = "lightgray" ;
+		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height) ;
+		const x=this.screenX(0);
+		const y=this.screenY(0);
+		this.ctx.beginPath() ;
+		this.ctx.moveTo(x,y);
+		const a = .5*(this.Xend-this.Yend-x+y);
+		this.ctx.lineTo(x+a,y-a);
+		this.ctx.lineTo(this.Xend,this.Yend);
+		this.ctx.lineTo(this.Yend+x-y,this.Yend);
+		this.ctx.closePath() ;
+		this.ctx.fillStyle="white";
+		this.ctx.fill();
+		this.endTab = new Path2D() ;
+		this.endTab.moveTo(x,y);
+		this.active = false ;
+	}
+	
+}
+
+class Design extends Graph {
+	constructor() {
+		super("Design");
+		this.canvas.addEventListener("mousedown", e => {
+			this.active = true;
+			this.new_point( e.offsetX, e.offsetY ) ;
+		});
+		this.canvas.addEventListener("mousemove", e => {
+			if ( this.active ) {
+				this.new_point( e.offsetX, e.offsetY ) ;
+			}
+		});
+		this.canvas.addEventListener("mouseup", e=> {
+			this.active = false ;
+			this.new_point( e.offsetX, e.offsetY ) ;
+		});
+		this.folddiv=document.getElementById("FoldDiv"); 
+		this.clear();
+	}
+
+	clear() {
+		this.folddiv.hidden=true;
+		this.folded=null;
+		this.ctx.strokeStyle="black";
+		this.ctx.fillStyle = "lightgray" ;
+		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height) ;
+		const x=this.screenX(0);
+		const y=this.screenY(0);
+		this.ctx.beginPath() ;
+		this.ctx.moveTo(x,y);
+		const a = .5*(this.Xend-this.Yend-x+y);
+		this.ctx.lineTo(x+a,y-a);
+		this.ctx.lineTo(this.Xend,this.Yend);
+		this.ctx.lineTo(this.Yend+x-y,this.Yend);
+		this.ctx.closePath() ;
+		this.ctx.fillStyle="white";
+		this.ctx.fill();
+		this.endTab = new Path2D() ;
+		this.endTab.moveTo(x,y);
+		this.active = false ;
+	}
+	
+	new_point(x,y) {
+		if ( this.ctx.isPointInPath( x, y ) ) {
+			this.ctx.fillStyle="lightgray";
+			this.ctx.fill();
+			this.ctx.beginPath();
+			this.ctx.moveTo(x,y);
+			const a = .5*(this.Xend-this.Yend-x+y);
+			this.ctx.lineTo(x+a,y-a);
+			this.ctx.lineTo(this.Xend,this.Yend);
+			this.ctx.lineTo(this.Yend+x-y,this.Yend);
+			this.ctx.closePath() ;
+			this.ctx.fillStyle="white";
+			this.ctx.fill();
+			this.endTab.lineTo(x,y)
+			this.ctx.stroke(this.endTab);
+			if ( Math.abs(this.Xend-this.Yend-x+y)<=1 ) {
+				this.end_point();
+			}
+		}
+	}
+	
+	finish() {
+		this.ctx.fillStyle="lightgray";
+		this.ctx.fill();
+		this.end_point() ;
+	}
+	
+	end_point() {
+		this.endTab.lineTo(this.Xend,this.Yend);
+		this.endTab.closePath();
+		this.ctx.stroke(this.endTab);
+		this.ctx.fillStyle="blue";
+		this.ctx.fill(this.endTab);
+		// Make segments
+		this.seg=[] ;
+		this.ctx.strokeStyle="yellow";
+		for ( let i=0 ; i<=this.segnumber ; i+=1 ) {
+			const x = this.screenX(i/this.segnumber) ;
+			let y = this.Yend/2 ;
+			let diff = y ;
+			while ( diff > 1 ) {
+				diff *= .5 ;
+				if ( this.ctx.isPointInPath( this.endTab, x, y ) ) {
+					y -= diff ;
+				} else {
+					y += diff ;
+				}
+			}
+			this.seg[i]=this.pY(y);
+			this.ctx.beginPath();
+			this.ctx.moveTo(x,this.Yend);
+			this.ctx.lineTo(x,y);
+			this.ctx.stroke();
+		}
+		this.seg[0] = 0 ;
+		this.seg[this.segnumber] = 0 ;
+		this.folddiv.hidden=false;
+		this.folded=new Folded(this.seg);
 	}
 }
 
+class Folded extends Graph {
+	constructor(seg) {
+		super("Folded");
+		this.clear();
+		this.plot(this.Xs(seg),seg);
+	}
+
+	clear() {
+		this.ctx.fillStyle = "lightgray" ;
+		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height) ;
+		this.ctx.strokeStyle = "white" ;
+		this.ctx.lineWidth = 1 ;
+		for ( let i = 0; i <= 1 ; i += .1 ) {
+			// grid
+			this.ctx.beginPath() ;
+			this.ctx.moveTo( this.screenX(i),this.screenY(0) ) ;
+			this.ctx.lineTo( this.screenX(i),this.screenY(.5) ) ;
+			this.ctx.stroke() ;
+		}
+		for ( let i = 0; i <= .5 ; i += .1 ) {
+			// grid
+			this.ctx.beginPath() ;
+			this.ctx.moveTo( this.screenX(0),this.screenY(i) ) ;
+			this.ctx.lineTo( this.screenX(1),this.screenY(i) ) ;
+			this.ctx.stroke() ;
+		}
+		this.ctx.fillStyle = "black" ;
+		for ( let i = .1; i <= this.Ydim ; i += .1 ) {
+			this.ctx.fillText(Number(i).toFixed(2).replace(/0$/,""),this.screenX(0),this.screenY(i))
+		}
+	}
+	
+	plot(X,Y) {
+		console.log("X",X);
+		console.log("Y",Y);
+		this.ctx.strokeStyle="red";
+		this.ctx.lineWidth=2;
+		this.ctx.fillStyle="blue";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.screenX(X[0]),this.screenY(Y[0]));
+		X.slice(1).forEach( (x,i) => this.ctx.lineTo(this.screenX(x),this.screenY(Y[i])) );
+		this.ctx.stroke();
+		this.ctx.closePath();
+		this.ctx.fill();
+	}
+	
+	Xs(u) {
+		let sum = 0. ;
+		const N1 = 1/this.segnumber**2 ;
+		let u0 = u[0] ;
+		const X = u.slice(1).map( u1 => {
+			sum += Math.sqrt(Math.max(0,N1-(u1-u0)**2)) ;
+			//console.log(sum);
+			u0=u1;
+			return sum;
+		});
+		X.unshift(0);
+		return X.map( x => x + (1-sum)/2 ) ; // centering
+	}
+}
 
 onload = () => {
 	design = new Design() ;
 	//console.log("new offload");
-	design.run() ;
+	//design.run() ;
 }
 
 class WorkerCanvas {
