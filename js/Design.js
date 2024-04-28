@@ -162,7 +162,7 @@ class Design extends Graph {
 			const x = this.screenX(i/this.segnumber) ;
 			let y = this.Yend/2 ;
 			let diff = y ;
-			while ( diff > 1 ) {
+			while ( diff > .001 ) {
 				diff *= .5 ;
 				if ( this.ctx.isPointInPath( this.endTab, x, y ) ) {
 					y -= diff ;
