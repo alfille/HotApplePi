@@ -15,4 +15,7 @@
   - [Maximum - Approximation](./approach.md)
   - [Maximum - Results](./results.md)
 - [Arc](./arc.md)
+- [Project design](./project.md)
+  - [Pinhole](./pinhole.md)
+  
 
