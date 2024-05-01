@@ -1,16 +1,41 @@
 # Pinhole
+![](images/687474703a2f2f692e696d6775722e636f6d2f664b65314e33452e6a7067.gif)
 
-## Purpose
+[Pinhole-js](https://github.com/tidwall/pinhole-js/tree/master) is a pure Javascript program by Josh Baker that rotates a line drawing on the HTML Canvas.
 
-## Source
+It is apparently based on his Go program [Pinhole](https://github.com/tidwall/pinhole)
+
+The code is MIT licensed, simple and reviewd (by me) for safety.
 
 ## Modifications
 
+We use a [fork of Pinhole](https://github.com/alfille/pinhole-js) with the following modifications:
+
+* Added tthtic's [ellipse](https://github.com/tthtlc/pinhole-js/tree/master)
+* changed to Javascript classes
+* removed most global "vars"
+* Moved the rotating event loop out of the main code body
+* Added control buttons
+* Added Web worker function to offload computation and display.
+
 ## Front end
+
+The non-web worker part performs:
+
+* Launch web worker (back end).
+* Send graphics construction
+* manage controls (buttons)
 
 ## Back end
 
+Uses an offscreen canvas sent by front-end to display and rotate image
+
+Stores construction and rotation parametes
+
 ## Communication
+
+Web-worker standard: PostMessage front->back
+Communication is all one-way.
 
 ### Messages
 
