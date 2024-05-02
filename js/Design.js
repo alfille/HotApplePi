@@ -114,9 +114,11 @@ class Design extends Graph {
 		document.getElementById("FoldDiv").hidden=false;
 		this.folded=new Folded(this.seg) ;
 		document.getElementById("Download").removeAttribute("disabled");
+		document.getElementById("threedee").hidden=false;
 	}
 			
 	hide() {
+		document.getElementById("threedee").hidden=true;
 		document.getElementById("FoldDiv").hidden=true;
 		document.getElementById("Download").setAttribute("disabled",true);
 		this.folded=null ;
@@ -260,4 +262,6 @@ class Folded extends Graph {
 
 onload = () => {
 	design = new Design() ;
+	pinhole = new Pinhole("C3D");
+	pinhole.buttons("D3D");
 }

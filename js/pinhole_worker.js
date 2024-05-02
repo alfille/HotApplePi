@@ -525,8 +525,8 @@ class Pinhole {
     
     unpack( oplist ) {
 		this.begin() ;
-		oplist.forEach( (op) {
-			switch ( op[0] ) :
+		oplist.forEach( op => {
+			switch ( op[0] ) {
 				case "center":
 					this.center( ...op[1] ) ;
 					break ;
@@ -558,6 +558,7 @@ class Pinhole {
 					this.translate( ...op[1] ) ;
 					break ;
 			}
+			}) ;
 		this.end() ;
 	}
 		
@@ -569,8 +570,7 @@ onmessage = (evt) => {
 	if ( evt.isTrusted ) {
 		switch ( evt.data.type ) {
 			case "new":
-				pin = new Pinup( evt.data.canvas ) ;
-				pin.Clear() ;
+				pin = new Pinhole( evt.data.canvas ) ;
 				break ;
 			case "ops":
 				pin.unpack( evt.data.oplist ) ;
