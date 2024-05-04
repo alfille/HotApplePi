@@ -4,60 +4,20 @@
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
-
-class Rotator {
-	constructor( pinhole ) {
-		this.pinhole = pinhole ;
-		this.inc = Math.PI/360;
-		this.Stop() ;
-	}
-	
-	Stop() {
-		this.dx = 0 ;
-		this.dy = 0 ;
-		this.dz = 0 ;
-	}
-	
-	X(d) {
-		this.dx += d*this.inc ;
-	}
-	
-	Y(d) {
-		this.dy += d*this.inc ;
-	}
-	
-	Z(d) {
-		this.dz += d*this.inc ;
-	}
-	
-	Step() {
-		this.pinhole.rotate( this.dx, this.dy, this.dz ) ;
-	}
-	
-	Frame(canvas) {
-		this.Step() ;
-		this.pinhole.render(canvas,{bgColor:'white'});
-	}
-	
-	Run( canvas ) {
-		const frame = () => {
-			this.Step();
-			this.pinhole.render(canvas,{bgColor:'white'});
-			window.requestAnimationFrame(frame);
-		}
-		window.requestAnimationFrame(frame);
-	}
-}
-
 class Pinhole {
     constructor(canvas){
 		this.canvas = canvas ;
+		this.global_scale = 1. ; // default
 		this.ctx=this.canvas.getContext("2d",{willReadFrequently:true,});
 		// lines is total graphic elements
         this.lines = [];
         // stack is start of individual elements ( begin -> end )
         this.stack = [];
         // actions on stack, if any, else all
+        
+        // Rotator stuff
+		this.inc = Math.PI/360;
+		this.Stop() ;
     }
     
     begin(){
@@ -559,7 +519,44 @@ class Pinhole {
 					break ;
 			}
 			}) ;
+		this.scale( this.global_scale, this.global_scale, this.global_scale ) ;
 		this.end() ;
+	}
+	
+	set_global_scale( s ) {
+		this.global_scale = s ;
+	}	
+
+
+	// Rotator Methods
+	Stop() {
+		this.dx = 0 ;
+		this.dy = 0 ;
+		this.dz = 0 ;
+	}
+	
+	Delta(x,y,z) {
+		this.dx += x*this.inc ;
+		this.dy += y*this.inc ;
+		this.dz += z*this.inc ;
+	}
+	
+	Step() {
+		this.rotate( this.dx, this.dy, this.dz ) ;
+	}
+	
+	Frame(canvas) {
+		this.Step() ;
+		this.render(canvas,{bgColor:'white'});
+	}
+	
+	Run( canvas ) {
+		const frame = () => {
+			this.Step();
+			this.pinhole.render(canvas,{bgColor:'white'});
+			window.requestAnimationFrame(frame);
+		}
+		window.requestAnimationFrame(frame);
 	}
 		
 }
@@ -568,14 +565,23 @@ var pin = null;
 
 onmessage = (evt) => {
 	if ( evt.isTrusted ) {
+		console.log( evt.data);
 		switch ( evt.data.type ) {
 			case "new":
 				pin = new Pinhole( evt.data.canvas ) ;
 				break ;
 			case "ops":
-				pin.unpack( evt.data.oplist ) ;
-				pin.render() ;
+				pin.unpack( evt.data.value ) ;
 				break ;
+			case "rotate":
+				pin.Delta( ...evt.data.value ) ;
+				break ;
+			case "scale":
+				pin.set_global_scale( evt.data.value ) ;
+				break ;
+			case "stop":
+			    pin.Stop() ;
+			    break ;
 		}
 	}
 }

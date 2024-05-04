@@ -40,9 +40,18 @@ class Pinhole {
 
 	rot( x,y,z, W ) {
 		console.log(x,y,z,W);
+		W.postMessage( {type:"rotate", value:[x,y,z]} ) ;
 	}
-
-	Stop(W) {
-		console.log("Stop",W);
+	
+	scale( s ) {
+		this.W.postMessage( {type:"scale", value:s, } );
+	}
+	
+	stop( W ) {
+		W.postMessage( {type:"stop",} ) ;
+	}
+	
+	ops( oplist ) {
+		this.W.postMessage( { type:"ops", value: oplist, } ) ;
 	}
 }

@@ -196,37 +196,39 @@ class Folded extends Graph {
 		this.seg = seg;
 		this.segnumber=seg.length-1;
 		this.clear();
-		this.plot(this.Xs(seg),seg);
+		this.Xs() ;
+		this.plot();
+		this.threedee() ;
 	}
 
 	clear() {
 		this.grid();
 	}
 	
-	plot(X,Y) {
+	plot() {
 		this.ctx.strokeStyle="red";
 		this.ctx.lineWidth=2;
 		this.ctx.fillStyle="blue";
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.screenX(X[0]),this.screenY(Y[0]));
-		X.slice(1).forEach( (x,i) => this.ctx.lineTo(this.screenX(x),this.screenY(Y[i])) );
+		this.ctx.moveTo(this.screenX(this.X[0]),this.screenY(this.seg[0]));
+		this.X.slice(1).forEach( (x,i) => this.ctx.lineTo(this.screenX(x),this.screenY(this.seg[i])) );
 		this.ctx.stroke();
 		this.ctx.closePath();
 		this.ctx.fill();
 	}
 	
-	Xs(u) {
+	Xs() {
 		let sum = 0. ;
 		const N1 = 1/this.segnumber**2 ;
-		let u0 = u[0] ;
-		const X = u.slice(1).map( u1 => {
+		let u0 = this.seg[0] ;
+		const X = this.seg.slice(1).map( u1 => {
 			sum += Math.sqrt(Math.max(0,N1-(u1-u0)**2)) ;
 			//console.log(sum);
 			u0=u1;
 			return sum;
 		});
 		X.unshift(0);
-		return X.map( x => x + (1-sum)/2 ) ; // centering
+		this.X = X.map( x => x + (1-sum)/2 ) ; // centering
 	}
 
 	format_line(arr) {
@@ -257,6 +259,14 @@ class Folded extends Graph {
 			this.seg.map( (u,i) => this.format_line( [ i/this.segnumber,x[i],u ] ) ).join('');
 		const blub = new Blob([csv], {type: 'text/csv'});
 		this.blob( blub ) ;
+	}
+	
+	threedee() {
+		const L = 1 ;
+		pinhole.scale(.9);
+		const top = this.seg.map( (f,i) => [ "drawLine", [this.X[i], L-f, f, this.X[i], f-L, f] ] ) ; 
+		const bottom = this.seg.map( (f,i) => [ "drawLine", [this.X[i], L-f, -f, this.X[i], f-L, -f] ] ) ; 
+		pinhole.ops( [ ...top, ...bottom ] );
 	}
 }
 
