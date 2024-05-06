@@ -194,13 +194,13 @@ class Folded extends Graph {
 	constructor(seg) {
 		super("Folded");
 		this.rot_seg = 30 ;
-		this.L = .7 ; // half length
+		this.L = .6 ; // half length
 		this.seg = seg;
 		this.segnumber=seg.length-1;
 		this.clear();
 		this.Xs() ;
 		this.plot(); // folded plot
-		this.Full3D() ; // 3D plot
+		this.Full3D() ;
 	}
 
 	clear() {
@@ -291,7 +291,7 @@ class Folded extends Graph {
 		pinhole.ops( end1b.concat([["colorize",["red"]]]) );
 		pinhole.ops( end2t.concat([["colorize",["red"]]]) );
 		pinhole.ops( end2b.concat([["colorize",["red"]]]) );
-		pinhole.turn( 9,1,0 ) ;
+		pinhole.turn( -5,0,3 ) ;
 	}
 
 	Quarter3D() {
@@ -318,7 +318,7 @@ class Folded extends Graph {
 		pinhole.ops( end1b.concat([["colorize",["lightblue"]]]) );
 		pinhole.ops( end2t.concat([["colorize",["blue"]]]) );
 		pinhole.ops( end2b.concat([["colorize",["blue"]]]) );
-		pinhole.turn( 0,0,0 ) ;
+		pinhole.turn( -2.3,0.3,0 ) ;
 	}
 }
 

@@ -109,7 +109,6 @@ class Pinhole {
     }
     
     colorize(color){
-		console.log(color);
         for (let i = this._stackstart(); i < this.lines.length; i++) {
             this.lines[i].color = color;
         }
@@ -592,7 +591,6 @@ var pin = null;
 
 onmessage = (evt) => {
 	if ( evt.isTrusted ) {
-		console.log( evt.data);
 		switch ( evt.data.type ) {
 			case "new":
 				pin = new Pinhole( evt.data.canvas ) ;

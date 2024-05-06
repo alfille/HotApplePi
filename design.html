@@ -9,7 +9,7 @@
 	  See <a href="https://github.com/alfille/HotApplePi" target="_blank">Hot Apple Pi page</a><br>	  
 	  
 	  <H2>Draw your profile</H2>
-	  <input type="button" onclick="design.clear()" value="Clear" title="New profile">
+	  <input type="button" onclick="location.reload()" value="Clear" title="New profile">
 	  <input type="button" onclick="design.finish()" value="Finish" title="Complete profile">
 	  <input type="button" onclick="design.download()" id="Download" value="Download" title="Download profile as CSV file">
 	  Button down in white area<br>
@@ -20,9 +20,15 @@
 	  </div>
 	  <div id="threedee" hidden>
 		<H2>3D</H2>
-		<div id="D3D">
-			<label><input type="radio" name="F_Q" onClick="design.folded.Full3D()" checked>Full</label>
-			<label><input type="radio" name="F_Q" onClick="design.folded.Quarter3D()">Quarter</label>
+		<div style="display:flex">
+			<fieldset>
+				<legend>Display</legend>
+				<label><input type="radio" name="F_Q" onClick="design.folded.Full3D()" checked>Full</label>
+				<label><input type="radio" name="F_Q" onClick="design.folded.Quarter3D()">Quarter</label>
+			</fieldset>
+			<fieldset id="D3D">
+				<legend>Controls</legend>
+			</fieldset>
 		</div>
 		<canvas height="1000" width="1000" id="C3D" style="border:1px solid grey"></canvas>
 	  </div>
