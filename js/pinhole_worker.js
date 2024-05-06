@@ -7,18 +7,27 @@
 class Pinhole {
     constructor(canvas){
 		this.canvas = canvas ;
+		this.stopped = true ;
 		this.global_scale = 1. ; // default
 		this.ctx=this.canvas.getContext("2d",{willReadFrequently:true,});
+        // actions on stack, if any, else all
+        
+        // Rotator stuff
+        this.degree = Math.PI/180 ;
+		this.inc = this.degree/10;
+		this.clear() ;
+		this.render_opts={ bgColor:"white", lineWidth:1 } ;
+    }
+    
+    clear() {
+		this.ctx.fillStyle = "white" ;
+		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height) ;
 		// lines is total graphic elements
         this.lines = [];
         // stack is start of individual elements ( begin -> end )
         this.stack = [];
-        // actions on stack, if any, else all
-        
-        // Rotator stuff
-		this.inc = Math.PI/360;
 		this.Stop() ;
-    }
+	}
     
     begin(){
         this.stack.push(this.lines.length);
@@ -100,6 +109,7 @@ class Pinhole {
     }
     
     colorize(color){
+		console.log(color);
         for (let i = this._stackstart(); i < this.lines.length; i++) {
             this.lines[i].color = color;
         }
@@ -291,7 +301,7 @@ class Pinhole {
         return 0;
     }
     
-    render(opts){
+    render(opts=this.render_opts){
         const optsScale = (opts?opts.scale:null)||1;
         const optsLineWidth = (opts?opts.lineWidth:null)||1;
         const optsBGColor = (opts?opts.bgColor:null)||'white';
@@ -462,7 +472,8 @@ class Pinhole {
     }
     
     _lineWidthAtZ(z, f) {
-        return ((z*-1 + 1) / 2) * f * 0.04;
+//        return ((z*-1 + 1) / 2) * f * 0.04;
+        return ((z*-1 + 1) / 2) * f * 0.01;
     }
     
     _lineAngle(x1, y1, x2, y2){
@@ -517,6 +528,9 @@ class Pinhole {
 				case "translate":
 					this.translate( ...op[1] ) ;
 					break ;
+				default:
+					console.error("Unrecognized op",op);
+					break ;
 			}
 			}) ;
 		this.scale( this.global_scale, this.global_scale, this.global_scale ) ;
@@ -529,16 +543,24 @@ class Pinhole {
 
 
 	// Rotator Methods
+	
 	Stop() {
 		this.dx = 0 ;
 		this.dy = 0 ;
 		this.dz = 0 ;
+		this.Delta(0,0,0);
 	}
 	
 	Delta(x,y,z) {
 		this.dx += x*this.inc ;
 		this.dy += y*this.inc ;
 		this.dz += z*this.inc ;
+		if ( (this.dx==0) && (this.dy==0) && (this.dz==0) ) {
+			this.stopped = true ;
+		} else {
+			this.stopped = false ;
+		}
+		this.Run() ;
 	}
 	
 	Step() {
@@ -547,18 +569,23 @@ class Pinhole {
 	
 	Frame(canvas) {
 		this.Step() ;
-		this.render(canvas,{bgColor:'white'});
+		this.render();
 	}
 	
 	Run( canvas ) {
-		const frame = () => {
-			this.Step();
-			this.pinhole.render(canvas,{bgColor:'white'});
-			window.requestAnimationFrame(frame);
+		if ( this.stopped ) {
+			this.render();
+		} else {
+			const frame = () => {
+				this.Step();
+				this.render();
+				if ( ! this.stopped ) {
+					self.requestAnimationFrame(frame);
+				}
+			}
+			self.requestAnimationFrame(frame);
 		}
-		window.requestAnimationFrame(frame);
-	}
-		
+	}		
 }
 
 var pin = null;
@@ -572,9 +599,14 @@ onmessage = (evt) => {
 				break ;
 			case "ops":
 				pin.unpack( evt.data.value ) ;
+				pin.Run()
 				break ;
 			case "rotate":
 				pin.Delta( ...evt.data.value ) ;
+				break ;
+			case "turn":
+				pin.rotate( ...evt.data.value ) ;
+				pin.Delta( 0,0,0 ) ;
 				break ;
 			case "scale":
 				pin.set_global_scale( evt.data.value ) ;
@@ -582,6 +614,9 @@ onmessage = (evt) => {
 			case "stop":
 			    pin.Stop() ;
 			    break ;
+			case "clear":
+				pin.clear() ;
+				break ;
 		}
 	}
 }

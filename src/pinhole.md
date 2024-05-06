@@ -31,8 +31,11 @@ This part performs:
 The front end is [pinhole-front.js](https://github.com/alfille/HotApplePi/js/pinhole-front.js) and should be added as a script in the main html file. In exposes 4 interfaces:
 
 * new Pinhole(canvas_id) 
+* Pinhole.clear()
 * Pinhole.buttons(button_div_id)
 * Pinhole.scale(scale_factor) for a global scale factor (for all subsequent entries)
+* Pinhole.turn( x,y,z )
+  * one-time 3D rotation
 * Pinhole.ops([oplist]) in format below 
 
 ## Back end
@@ -52,6 +55,8 @@ Post from Front-end to web worker back-end:
 
 * type:"new"
   * send offscreen canvas reference
+* type: "clear"
+  * clear canvas and figure
 * type:"ops"
   * value: \[element, element, ...\]
     * list elements are list pairs

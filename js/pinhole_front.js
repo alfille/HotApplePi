@@ -4,8 +4,6 @@
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
-var pinhole = null ;
-
 class Pinhole {
 	constructor(canvas_id) {
 		this.W = new Worker("js/pinhole_worker.js");
@@ -39,19 +37,32 @@ class Pinhole {
 	}
 
 	rot( x,y,z, W ) {
-		console.log(x,y,z,W);
+		// continuous rotation
 		W.postMessage( {type:"rotate", value:[x,y,z]} ) ;
 	}
 	
+	turn( x,y,z  ) {
+		// global (1-time) rotation
+		this.W.postMessage( {type:"turn", value:[x,y,z]} ) ;
+	}
+	
 	scale( s ) {
+		// global scale
 		this.W.postMessage( {type:"scale", value:s, } );
 	}
 	
 	stop( W ) {
+		// stop rotations
 		W.postMessage( {type:"stop",} ) ;
 	}
 	
 	ops( oplist ) {
+		// send list of design elements
 		this.W.postMessage( { type:"ops", value: oplist, } ) ;
+	}
+	
+	clear() {
+		// clear the screen and design
+		this.W.postMessage( { type:"clear", } ) ;
 	}
 }
