@@ -50,4 +50,11 @@ And (by similar argument) and the requirement that \\(f(1)=0,\\,f(s)\geq0\\)
 
 \\[f'(1)=-1\\]
 
-So at least we know at the endpoints \\(f(s)=\pm45\^\circ\\) when flat and \\(90\^\circ\\) folded. 
+So at least we know at the endpoints \\(f(s)=\pm45\^\circ\\) when flat and \\(90\^\circ\\) folded.
+
+## Symmetry
+
+It seems pretty evident that the problem description and constraints are identical at \\(s=0\\) and \\(s=1\\) so we expect the solution to be symmetric at \\(s=.5\\), implying \\(f'(.5)=0\\)
+
+\\[f(.5)\times(L-f(.5))=C\\]  
+\\[f'(s)=\sqrt{1-\frac{f(s)(L-f(s)}{f(.5)(L-f(.5)}}\\]
