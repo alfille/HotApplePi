@@ -121,13 +121,40 @@ What are the limiting conditions for large and small \\(L\\)?
 
 \\[s+C1=\frac{C \arcsin({L/C\times f})}{L}\\]
 
-\\[f=\frac{L}{C}\sin(\frac{L\times(s+C1)}{C})\\]
+\\[f=\frac{C}{L}\sin(\frac{L\times(s+C1)}{C})\\]
 
-This satisfies \\(f(0)=0\\), for the boundary condition at \\(s=1\\):
+To satisfy endpoints:
 
-\\[\pi=\frac{(1+C1)L}{C}\quad\rightarrow\quad C1=\frac{\pi C}{L}-1\\]
+\\[f(0)=0\\,\rightarrow\\,C1=0\\]
 
-Giving
+\\[f(1)=0\\,\rightarrow\\,L/C=\pi\\,\rightarrow C=L/\pi\\]
 
-\\[f=\frac{L\\]
+Thus for \\(L\gg f\\):
+
+\\[f(s)=\frac{\sin(\pi s)}{\pi}\\]
+
+And at \\(s=.5\\):
+
+\\[f(.5)=1/\pi\\]
+
+So in the limit of \\(L\gg f\\) *there is \\(\pi\\) in Hot Apple Pie*
+
+### Small length \\(L\ll 1/\pi\\)
+
+Since \\(f(s) \leq L/2 \\) we cannot ignore the \\(L\\) term -- it is a strong limit on \\(f(s)\\). We presume that for small \\(L\\) the curve is relatively flat except at the ends.
+
+\\[f'(s) \approx 0 \quad \text{for}\quad s\_0\leq s \leq 1-s\_0\\]
+
+\\[f(s)\times(L-f(s)) \approx C = f(.5)\times(L-f(.5)) \quad \text{for}\quad s\_0\leq s \leq 1-s\_0\\]
+
+\\[f(s) \approx f(.5)\quad \text{for}\quad s\_0\leq s \leq 1-s\_0\\]
+
+In the region \\(0\leq s \leq s\_0\\) use a quadratic approximation:
+
+\\[f(s)=a s\^2+(\frac{f(.5)}{s\_0}-a s\_0) s\\]
+
+which satisfies \\(f(s)=0\\) and \\(f(s\_0)=f(.5)\\)
+
+
+
 
