@@ -10,6 +10,8 @@
   - [Edge](./edge.md)
   - [Volume](./volume.md)
   - [Extremal](./extremal.md)
+    - [Maximum -- Long Length](./long.md)
+    - [Maximum -- Short Length](./short.md)
 - [Line Segments](./segments.md)
   - [Maximum - Equations](./seg_max.md)
   - [Maximum - Approximation](./approach.md)
