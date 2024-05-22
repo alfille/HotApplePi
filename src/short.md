@@ -108,9 +108,9 @@ Using the segment approach and gradient optimizer:
 ![](images/loglog.png)
 
 * __Blue dots__ Measured results
-* __Red line__  Ramp Approximation
+* __Red line__  Straight Approximation
   * not seen, under __Green__
-* __Green line__ Sine Approximation
+* __Green line__ \\(\sin()\\) Approximation
 * __Purple line__ Long length Assymptote
 
 Remarkably good correlation!
