@@ -6,9 +6,10 @@ By "short length" we mean \\(L\\) is small. Since \\(f \leq L/2\\) that means th
 
 Assume a flattened curve:
 
-endpoints:
+* endpoints:
 \\[f(0)=0\quad f(1)=0 \\]
-center region:
+
+* center region:
 \\[f(s)=f(.5)\quad s\_0 \leq s \leq 1-s\_0 \\]
 
 What is less obvious is the end regions. We could use a polynomial approximation or a simpler sine approximation and simplest of all, a ramp.
@@ -19,9 +20,13 @@ What is less obvious is the end regions. We could use a polynomial approximation
 \\[f'=0\\]
 \\[Volume\_{center}=4 f(.5) (L-f(.5)) (1-2 s\_0 )\\]
 
-### End -- Ramp
+### Straight fit
 
-Note \\(s\_0=f(.5)\\)
+Use a straight curve linking \\(f(0)=0\\) to \\(f(s\_0)=f(.5)\\) with \\(f'(s)=1\\) in this end region:
+
+\\[f(s)=s\quad 0\leq s \leq s\_0 \\]
+
+Note this implies \\(s\_0=f(.5)\\)
 
 \\[f(s)=s\quad 0\leq s \leq f(.5)\\]
 \\[f' = 1\\]
@@ -40,14 +45,16 @@ Taylor series:
 
 \\[Volume=L\^2-L\^3+\frac{L\^4}{4}+\frac{L^5}{4}+\frac{L\^6}{8}+\cdots\\]
 
-### End -- Sine
+### \\(\sin()\\) fit
+
+Fit a \\(\sin()\\) curve to the end region that satisfies the constraints.
 
 \\[f(s)=f(.5) \sin(\frac{\pi}{2} \frac{s}{s\_0})\\]
 \\[f'(s)=f(.5) \frac{\pi}{2 s\_0}\cos(\frac{\pi}{2} \frac{s}{s\_0})\\]
 
-\\[f'(0)=f(.5) \frac{\pi}{2 s\_0} \leq 1\rightarrow f(.5)\leq\frac{2 s\_0}{\pi}\\]
+\\[f'(0)=f(.5) \frac{\pi}{2 s\_0} = 1\rightarrow f(.5)=\frac{2 s\_0}{\pi}\\]
 
-Assume \\(f(.5)=\frac{2 s\_0}{\pi}\\) or \\(s\_0=\pi f(.5)/2\\)
+So \\(f(.5)=\frac{2 s\_0}{\pi}\\) or \\(s\_0=\pi f(.5)/2\\)
 
 \\[f(s)=f(.5) \sin(\frac{s}{f(.5)})\quad f'(s)=\cos(\frac{s}{f(.5)})\\]
 
@@ -80,19 +87,19 @@ Taylor series
 ### \\(f(.5)\\)
 ![](images/effs.png)
 
-* __Blue__ Ramp approximation
-* __Red__  Sine Approximation
-* __Green__ Length
+* __Blue__ Straight approximation
+* __Red__  \\(\sin()\)) Approximation
+* __Green__ Length \\(L\\)
 * __Purple__ Limiting \\(L/2\\)
 
-Ramp and Sine are very close.
+Straight and \\(\sin()\\) are very close.
 
 ### Volume
 ![](images/vees.png)
 
-* __Blue__ Ramp approximation
-* __Red__  Sine Approximation
-* __Green__ Long Length Assymptote
+* __Blue__ Straight approximation
+* __Red__  \\(\sin()\\) Approximation
+* __Green__ [Long Length](./long.md) Assymptote
 
 ### Actual
 
@@ -109,4 +116,4 @@ Using the segment approach and gradient optimizer:
 Remarkably good correlation!
 
 * \\(L > 1\\) matches Long length
-* \\(L < 1\\) mathes both short length
+* \\(L < 1\\) mathes both short length approaches

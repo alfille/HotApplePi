@@ -2,13 +2,15 @@
 
 ## What end curve gives us the maximum volume?
 
+It's not obvious. Adding more height causes the ends to squeeze in.
+
 [We know that](volume.html)
 
 \\[Volume=4\times\int\_0\^1 \hat{f}(\sigma)\\,\lbrace\hat{L}-\hat{f}(\sigma)\rbrace\\,\sqrt{1-{\hat{f'}(\sigma)}\^2}\\,d\sigma\\]
 
 To find an optimal function is a classic problem in [calculus of variations](https://en.wikipedia.org/wiki/Calculus_of_variations)
 
-Call our function \\(F(f,f')\\), We'll simplify \\(\hat{f}\rightarrow f\\) for this analysis.
+Call our function \\(F(f,f')\\), We'll simplify \\(\hat{f}\rightarrow f\\) for this analysis. (I.e. assume that we are using normalized variables throughout.)
 
 \\[F(f,f')=f(s)\\,\lbrace L-f(s)\rbrace\\,\sqrt{1-{f'(s)}\^2}\\]
 
@@ -16,7 +18,7 @@ This is solved by the *Euler-Lagrange Equation*:
 
 \\[\frac{\partial F}{\partial f}-\frac{d}{ds}\frac{\partial F}{\partial f'}=0\\]
 
-Because \\(F\\) is not a function of \\(s\\) we can use the *Beltrami identity*:
+Because \\(F\\) is not an *explicit* function of \\(s\\) we can use the *[Beltrami identity](https://en.wikipedia.org/wiki/Beltrami_identity)*:
 
 \\[F-f' \frac{\partial F}{\partial f'}=C, \quad C \text { is a constant}\\] 
 
@@ -28,7 +30,7 @@ Using our formula for \\(F\\):
 
 Not that easy to solve.
 
-## Constant
+## The Constant \\(C\\)
 
 Since we know that
 
@@ -46,7 +48,7 @@ Therefore:
 
 \\[C\neq0\\]
 
-## Endpoints
+## The Endpoints
 
 Consider our equation
 
@@ -66,7 +68,7 @@ And (by similar argument) and the requirement that \\(f(1)=0,\\,f(s)\geq0\\)
 
 So at least we know at the endpoints \\(f(s)=\pm45\^\circ\\) when flat and \\(90\^\circ\\) folded.
 
-## Symmetry
+## The Midpoint
 
 It seems pretty evident that the problem description and constraints are identical at \\(s=0\\) and \\(s=1\\) so we expect the solution to be symmetric at \\(s=.5\\), implying \\(f'(.5)=0\\)
 
@@ -105,29 +107,23 @@ Thus
 
 which is a more restrictive bound for \\(f(s)\\).
 
-## Length limits
+## Full Constraints
 
-Consider our equation
+After this analysis, we have a more complete set of constraints for the optimal volume curve:
+
+* \\(f(0)=0\\)
+* \\(f'(0)=1\\)
+* \\(f'(.5)=0\\)
+* \\(f(s)\leq L/2 \\) for all \\(s\\)
+* \\(f'(1)=-1\\)
+* \\(f(1)=0\\)
+
+## Exploring Length \\(L\\)
+
+Our governing equation
 
 \\[f\times (L-f) = C\sqrt{1-{f'}\^2}\\]
 
-What are the limiting conditions for large and small \\(L\\)?
+and our constraints have only one given parameter: \\(L\\) the length
 
-### Large length \\(L\gg f(s)\\)
-
-\\[f\times L = C\sqrt{1-{f'}\^2}\\]
-
-\\[f'=\pm \sqrt{1-\frac{L\^2}{C\^2}f\^2}\\]
-
-\\[s+C1=\frac{C \arcsin({L/C\times f})}{L}\\]
-
-\\[f=\frac{L}{C}\sin(\frac{L\times(s+C1)}{C})\\]
-
-This satisfies \\(f(0)=0\\), for the boundary condition at \\(s=1\\):
-
-\\[\pi=\frac{(1+C1)L}{C}\quad\rightarrow\quad C1=\frac{\pi C}{L}-1\\]
-
-Giving
-
-\\[f=\frac{L\\]
-
+We next explore the behavior for [long](./long.md) and [short](./short.md) lengths.
