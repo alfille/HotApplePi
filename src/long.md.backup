@@ -80,11 +80,34 @@ Our *Long Length* volume limit is thus:
 
 \\[Volume=\frac{2 L}{\pi}\\]
 
-Using for full equation for volume:
-
-\\[Volume=4\times\int\_0\^1 f\times (L-f)\sqrt{1-f'\^2}\\,ds=\frac{2 L}{\pi}-\frac{16}{3 \pi\^3}\\]
-
 ## Conclusion
 
 For large length, __there is \\(\pi\\) inside *Hot Apple Pie*__
+
+## Addendum
+
+What happens if we calculate volume using our long profile 
+
+\\[f(s)=\frac{\sin(\pi s)}{\pi}\\]
+
+with the original volume equation:
+
+\\[Volume=4\times\int\_0\^1 f\times (L-f)\sqrt{1-f'\^2}\\,ds\\]
+
+Giving
+
+\\[Volume=\frac{2 L}{\pi}-\frac{16}{3 \pi\^3}\\]
+
+Note the constant from the \\(f\^2\\) term.
+
+![](images/vees2.png)
+
+The black line is the adjusted Long Volume, and as expected:
+
+* The constant term is insignificant for large \\(L\\)
+* The constant term pushes the volume negative (clearly unphysical) for small \\(L\\)
+
+![](images/vees3.png)
+
+Even in the range where the constant term is relevant, it adds nothing to accuracy.
 

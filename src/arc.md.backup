@@ -72,7 +72,7 @@ We can try to find conditions for maximum volume for arc profiles.
 
 ### Length
 
-\\[\frac{\partial V}{\partial L}=0=\int\_0\^{{\theta}\_0}\frac{\partial F(\theta,{\theta}\_0,L)}{\partial L}\\,d \theta\\]
+\\[\frac{\partial V}{\partial L}=0=\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^3({\theta}\_0)}\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta\\]
 \\[\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^3({\theta}\_0)}\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
 \\[\int\_0\^{{\theta}\_0}\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
 
