@@ -42,6 +42,18 @@ From [the internet](https:aplutopper.com)
 * *Arc*
 \\[\hat{f}(\hat{s})=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
 \\[\hat{f}'(\hat{s})=\frac{d \hat{f}}{d \hat{s}}=- \frac{\sin(\theta)}{\cos(\theta)}\\]
+* Length
+\\[\hat{L}=\frac{L}{2 \sin({\theta}\_0)}\\]
+* *Segment* height
+\\[\max{\hat{f}}=\frac{1-\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
+* Constraints
+\\[\max{\hat{f}}\leq\hat{L},\quad{\theta}\_0\leq\pi/4\\]
+![](images/arc_angle.png)
+
+Plot of \\(\hat{L}\\,\text{vs}\\,{\theta}\_0\\)
+
+* \\({\theta}\_0\\) in radians
+* Permissable \\(\hat{L}\\) in blue
 
 ## Folded (normalized)
 
@@ -49,7 +61,6 @@ From [the internet](https:aplutopper.com)
 \\[d \hat{x}=\sqrt{1-\hat{f}'\^2} d \hat{s}= \frac{\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{2 \sin({\theta}\_0)} d \theta\\]
 \\[\hat{z}=\hat{f}(\hat{s})=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
 \\[\hat{y}=\hat{L}-\hat{f}(\hat{s})=\hat{L}-\frac{\cos(\theta)}{2 \sin({\theta}\_0)}+\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
-\\[\hat{L}=\frac{L}{2 \sin({\theta}\_0)}\\]
 
 ## Volume
 
@@ -80,8 +91,8 @@ In the range \\(0\leq\theta\leq\pi/4\\) both terms are positive, so the integral
 
 ### Angle \\({\theta}\_0\\)
 
-\\[\frac{\partial V}{\partial {\theta}\_0}=0= F({\theta}\_0,{\theta}\_0,\hat{L})-\int\_0\^{{\theta}\_0} F(\theta,{\theta}\_0,\hat{L}) \\,d \theta\\]
-The first term is from integral limit being the dependent on \\({\theta}\_0\\), but note:
+\\[\frac{\partial V}{\partial {\theta}\_0}=0= F({\theta}\_0,{\theta}\_0,\hat{L})-\int\_0\^{{\theta}\_0} \frac{\partial F(\theta,{\theta}\_0,\hat{L})}{\partial {\theta}\_0} \\,d \theta\\]
+The first term is from [integral limit being dependent on \\({\theta}\_0\\)](https://en.wikipedia.org/wiki/Leibniz_integral_rule#General_form:_Differentiation_under_the_integral_sign), but note:
 \\[F({\theta}\_0,{\theta}\_0,\hat{L})=0\\]
 
 \\[\int\_0\^{{\theta}\_0}\frac{\cos\^3({\theta}\_0)+2 \cos({\theta}\_0)-2 \cos(\theta)\lbrace 2  \cos\^2({\theta}\_0)+1\rbrace+3 \cos\^2(\theta) \cos({\theta}\_0)-2 \sin({\theta}\_0)L \lbrace 3 \cos(\theta) \cos({\theta}\_0)+2 \cos\^2({\theta}\_0)+1\rbrace}{\sin\^4({\theta}\_{0})}\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta=0 

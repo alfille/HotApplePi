@@ -37,30 +37,40 @@ From [the internet](https:aplutopper.com)
 * *Radius*
 \\[R=\frac{1}{2 \sin({\theta}\_0)}\\]
 * *Chord* coordinate
-\\[s=\frac{\sin(\theta)}{2 \sin({\theta}\_0)}\quad -1/2\leq s \leq 1/2\\]
-\\[d s=\frac{\cos(\theta)}{2 \sin({\theta}\_0)} d \theta\\]
+\\[\hat{s}=\frac{\sin(\theta)}{2 \sin({\theta}\_0)}\quad -1/2\leq \hat{s} \leq 1/2\\]
+\\[d \hat{s}=\frac{\cos(\theta)}{2 \sin({\theta}\_0)} d \theta\\]
 * *Arc*
-\\[f(s)=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
-\\[f'(s)=\frac{d f}{d s}=- \frac{\sin(\theta)}{\cos(\theta)}\\]
+\\[\hat{f}(\hat{s})=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
+\\[\hat{f}'(\hat{s})=\frac{d \hat{f}}{d \hat{s}}=- \frac{\sin(\theta)}{\cos(\theta)}\\]
+* Length
+\\[\hat{L}=\frac{L}{2 \sin({\theta}\_0)}\\]
+* *Segment* height
+\\[\max{\hat{f}}=\frac{1-\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
+* Constraints
+\\[\max{\hat{f}}\leq\hat{L},\quad{\theta}\_0\leq\pi/4\\]
+![](images/arc_angle.png)
+
+Plot of \\(\hat{L}\\,\text{vs}\\,{\theta}\_0\\)
+
+* \\({\theta}\_0\\) in radians
+* Permissable \\(\hat{L}\\) in blue
 
 ## Folded (normalized)
 
 
-\\[d x=\sqrt{1-f'\^2} d s= \frac{\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{2 \sin({\theta}\_0)} d \theta\\]
-\\[z=f(s)=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
-\\[y=L-f(s)=L-\frac{\cos(\theta)}{2 \sin({\theta}\_0)}+\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
-
-*Note we are using a normalized \\(L=\frac{OldL}{2 \sin({\theta}\_0)}\\)*
+\\[d \hat{x}=\sqrt{1-\hat{f}'\^2} d \hat{s}= \frac{\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{2 \sin({\theta}\_0)} d \theta\\]
+\\[\hat{z}=\hat{f}(\hat{s})=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
+\\[\hat{y}=\hat{L}-\hat{f}(\hat{s})=\hat{L}-\frac{\cos(\theta)}{2 \sin({\theta}\_0)}+\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
 
 ## Volume
 
 Our expression for Volume:
 
-\\[V=4 \int f\times(L-f) d x\\]
+\\[V=4 \int \hat{f}\times(\hat{L}-\hat{f}) d \hat{x}\\]
 
 Or using \\(\theta\\) parametrically and recognizing that there is symmetry in \\(\pm\theta\\):
 
-\\[V=\frac{8}{2\^3 \sin\^3({\theta}\_0)} \int\_0\^{{\theta}\_0} \lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace L-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta\\]
+\\[V=\frac{8}{2\^3 \sin\^3({\theta}\_0)} \int\_0\^{{\theta}\_0} \lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace 2 \sin({\theta}\_0) \hat{L}-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta\\]
 
 The integral can be evaluated numerically, but is not resolvable in elementary functions.
 
@@ -68,22 +78,22 @@ The integral can be evaluated numerically, but is not resolvable in elementary f
 
 We can try to find conditions for maximum volume for arc profiles.
 
-\\[V = \int\_0\^{{\theta}\_0} F(\theta,{\theta}\_0,L) d \theta\quad \text{where}\\, F(\theta,{\theta}\_0,L)=\frac{\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace L-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{\sin\^3({\theta}\_0)}\\]
+\\[V = \int\_0\^{{\theta}\_0} F(\theta,{\theta}\_0,\hat{L}) d \theta\quad \text{where}\\, F(\theta,{\theta}\_0,\hat{L})=\frac{\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace 2 \sin({\theta}\_0)L-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{\sin\^3({\theta}\_0)}\\]
 
 ### Length
 
-\\[\frac{\partial V}{\partial L}=0=\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^3({\theta}\_0)}\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta\\]
-\\[\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^3({\theta}\_0)}\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
+\\[\frac{\partial V}{\partial \hat{L}}=0=\int\_0\^{{\theta}\_0}\frac{\partial F(\theta,{\theta}\_0,\hat{L})}{\partial \hat{L}}\\,d \theta\\]
+\\[\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^2({\theta}\_0)}\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
 \\[\int\_0\^{{\theta}\_0}\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
 
 In the range \\(0\leq\theta\leq\pi/4\\) both terms are positive, so the integral is never 0. Indeed:
-\\[\lim\_{L\rightarrow\infty} V=\infty\\]
+\\[\lim\_{\hat{L}\rightarrow\infty} V=\infty\\]
 
 ### Angle \\({\theta}\_0\\)
 
-\\[\frac{\partial V}{\partial {\theta}\_0}=0= F({\theta}\_0,{\theta}\_0,L)-\int\_0\^{{\theta}\_0} F(\theta,{\theta}\_0,L) \\,d \theta\\]
-The first term is from integral limit being the dependent on \\({\theta}\_0\\), but
-\\[\text{Note:}\quad F({\theta}\_0,{\theta}\_0,L)=0\\]
+\\[\frac{\partial V}{\partial {\theta}\_0}=0= F({\theta}\_0,{\theta}\_0,\hat{L})-\int\_0\^{{\theta}\_0} \frac{\partial F(\theta,{\theta}\_0,\hat{L})}{\partial {\theta}\_0} \\,d \theta\\]
+The first term is from [integral limit being dependent on \\({\theta}\_0\\)](https://en.wikipedia.org/wiki/Leibniz_integral_rule#General_form:_Differentiation_under_the_integral_sign), but note:
+\\[F({\theta}\_0,{\theta}\_0,\hat{L})=0\\]
 
-\\[\int\_0\^{{\theta}\_0}\frac{\cos\^3({\theta}\_0)+2 \cos({\theta}\_0)-2 \cos(\theta)\lbrace 2  \cos\^2({\theta}\_0)+1\rbrace+3 \cos\^2(\theta) \cos({\theta}\_0)-L \lbrace 3 \cos(\theta) \cos({\theta}\_0)+2 \cos\^2({\theta}\_0)+1\rbrace}{\sin\^4({\theta}\_{0})}\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta=0 
+\\[\int\_0\^{{\theta}\_0}\frac{\cos\^3({\theta}\_0)+2 \cos({\theta}\_0)-2 \cos(\theta)\lbrace 2  \cos\^2({\theta}\_0)+1\rbrace+3 \cos\^2(\theta) \cos({\theta}\_0)-2 \sin({\theta}\_0)L \lbrace 3 \cos(\theta) \cos({\theta}\_0)+2 \cos\^2({\theta}\_0)+1\rbrace}{\sin\^4({\theta}\_{0})}\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta=0 
 \\]
