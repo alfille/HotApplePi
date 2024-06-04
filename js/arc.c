@@ -15,10 +15,17 @@ enum { eVolume, eWidth, eHeight, eFolded, eUnfolded } eShow = eVolume ;
 
 struct func_params {
 	double theta0;
-	double sine;
-	double cosine;
+	double sin0;
+	double cos0;
 	double length ;
-} ;
+} gParams ;
+
+setParams( double theta0, double Lhat ) {
+	gParams.theta0 = theta0 ;
+	gParams.sin0 = gsl_sf_sin( theta0 ) ;
+	gParams.cos0 = gsl_sf_cos( theta0 ) ;
+	gParams.length = Lhat ;
+}
 
 int n_theta = 50 ;
 double * theta = NULL ;
@@ -31,11 +38,20 @@ double * length = NULL ;
 
 gsl_integration_romberg_workspace * GSLW ;
 
-double Fvolume( double t, void * params ) {
+double f_of_theta( double theta, void * params ) {
 	struct func_params * p = params ;
-	double c = gsl_sf_cos(t) ;
-	double f = .5 * (c - p->cosine) / p->sine ;
-	return 4 * f * (p->length - f) * sqrt(2 * gsl_pow_2(c) - 1) / p->sine ;
+	return .5 * ( gsl_sf_cos(theta) - p->cos0 ) / p->sin0 ;
+}
+
+double dx_of_theta( double theta, void * params ) {
+	struct func_params * p = params ;
+	return .5 * sqrt(gsl_sf_cos(2 * theta)) / p->sin0 ;
+}
+
+double volume_of_theta( double theta, void * params ) {
+	struct func_params * p = params ;
+	double f = f_of_theta( theta, params ) ;
+	return 8 * f * (p->length - f) * dx_of_theta( theta, params ) ;
 }
 
 double Volume( double theta0, double Lhat ) {
@@ -46,21 +62,14 @@ double Volume( double theta0, double Lhat ) {
 		return 0 ;
 	}
 
-	struct func_params p =
-	{ 
-		theta0,
-		gsl_sf_sin( theta0 ),
-		gsl_sf_cos( theta0 ),
-		Lhat,
-	} ;
-	
-	if ( Lhat < .5 * (1 - p.cosine) / p.sine ) {
+	setParams( teta0, Lhat ) ;
+	if ( Lhat < f_of_theta( 0., (void *) (&Params) ) ) {
 		return 0 ;
 	}
 	
 	gsl_function gf = {
-		.function = &Fvolume,
-		.params = (void *) (&p) 
+		.function = &volume_of_theta,
+		.params = (void *) (&Params) 
 	} ;
 	
 	int status = gsl_integration_romberg(
@@ -75,12 +84,6 @@ double Volume( double theta0, double Lhat ) {
 	return result ;
 }
 
-double Fwidth( double t, void * params ) {
-	struct func_params * p = params ;
-	double c = gsl_sf_cos(t) ;
-	return sqrt(2 * gsl_pow_2(c) - 1) / p->sine ;
-}
-
 double Width( double theta0 ) {
 	double result ;
 	size_t neval ;
@@ -89,17 +92,11 @@ double Width( double theta0 ) {
 		return 1. ;
 	}
 
-	struct func_params p =
-	{ 
-		theta0,
-		gsl_sf_sin( theta0 ),
-		gsl_sf_cos( theta0 ),
-		0.,
-	} ;
-	
+	setParams( theta0, 0 ) ;
+
 	gsl_function gf = {
-		.function = &Fwidth,
-		.params = (void *) (&p) 
+		.function = &dx_of_theta,
+		.params = (void *) (&Params) 
 	} ;
 	
 	int status = gsl_integration_romberg(
@@ -194,7 +191,8 @@ void CSVheight( void ) {
 	double results[n_theta+1] ;
 	results[0] = 0. ;
 	for ( int i = 1; i <= n_theta ; ++i ) {
-		results[i] = .5 * (1 - gsl_sf_cos(theta[i])) / gsl_sf_sin(theta[i]) ;
+		setParams( theta[i], 0 ) ;
+		results[i] = f_of_theta( 0, (void *) &Params ) ;
 	}
 	CSVline( "Max f(s)", results ) ;
 }
@@ -213,10 +211,6 @@ void CSVunfolded( void ) {
 	}
 }
 
-double Fx( double t, void * params ) {
-	return sqrt(fabs(gsl_sf_cos(2*t))) ;
-}
-
 double X( double theta0, double theta_start, double theta_finish ) {
 	double result ;
 	size_t neval ;
@@ -226,7 +220,7 @@ double X( double theta0, double theta_start, double theta_finish ) {
 	}
 
 	gsl_function gf = {
-		.function = &Fx,
+		.function = &dx_of_theta,
 		.params = NULL 
 	} ;
 	
@@ -239,8 +233,6 @@ double X( double theta0, double theta_start, double theta_finish ) {
 		& result,
 		& neval,
 		GSLW );
-	result *= .5/gsl_sf_sin( theta0 ) ; // normallize
-//	printf("t0=%g, %g->%g = %g\n",theta0,theta_start,theta_finish,result);
 	return result ;
 }
 
