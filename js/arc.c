@@ -214,8 +214,7 @@ void CSVunfolded( void ) {
 }
 
 double Fx( double t, void * params ) {
-	struct func_params * p = params ;
-	return .5 * sqrt(2 * gsl_pow_2(gsl_sf_cos(t)) - 1) / p->sine ;
+	return sqrt(fabs(gsl_sf_cos(2*t))) ;
 }
 
 double X( double theta0, double theta_start, double theta_finish ) {
@@ -226,17 +225,9 @@ double X( double theta0, double theta_start, double theta_finish ) {
 		return 0 ;
 	}
 
-	struct func_params p =
-	{ 
-		theta0,
-		gsl_sf_sin( theta0 ),
-		gsl_sf_cos( theta0 ),
-		0.,
-	} ;
-	
 	gsl_function gf = {
 		.function = &Fx,
-		.params = (void *) (&p) 
+		.params = NULL 
 	} ;
 	
 	int status = gsl_integration_romberg(
@@ -248,7 +239,8 @@ double X( double theta0, double theta_start, double theta_finish ) {
 		& result,
 		& neval,
 		GSLW );
-		printf("t0=%g, %g->%g = %g\n",theta0,theta_start,theta_finish,result);
+	result *= .5/gsl_sf_sin( theta0 ) ; // normallize
+//	printf("t0=%g, %g->%g = %g\n",theta0,theta_start,theta_finish,result);
 	return result ;
 }
 
@@ -261,14 +253,13 @@ void CSVfolded( void ) {
 		double t0 = M_PI_4 * a / 45 ;
 		double x[n_theta+1] ;
 		double f[n_theta+1] ;
-		x[0] = 0;
+		x[0] = 0. ;
 		f[0] = .5 * (1 - gsl_sf_cos(t0)) / gsl_sf_sin(t0) ;
-		double dt = M_PI_4 / n_theta ;
+		double dt = t0 / n_theta ;
 		for ( int i = 1; i <= n_theta ; ++i ) {
 			x[i] = x[i-1] + X(t0,(i-1)*dt, i*dt ) ;
-			f[i] = .5 * (gsl_sf_cos(i*dt) - gsl_sf_cos(t0)) / gsl_sf_sin(t0) ;
-			printf("%d\t%g\t%g\n",i,x[i],f[i]);
-			printf("\t\t%g,%g\n",X(t0,(i-1)*dt, i*dt ),X(t0,(i-1)*dt, i*dt ));
+			f[i] = fmax(0.,.5 * (gsl_sf_cos(i*dt) - gsl_sf_cos(t0)) / gsl_sf_sin(t0)) ;
+//			printf("%d\t%g\t%g\n",i,x[i],f[i]);
 		}
 		gsl_spline_init (spline, x, f, n_theta+1);
 		for ( int i = 0; i <= n_theta ; ++i ) {
@@ -279,11 +270,11 @@ void CSVfolded( void ) {
 				results[i] = 0 ;
 			}
 		}
-		gsl_spline_free (spline);
 		char title[40];
 		snprintf(title, 39, "theta0=%i", a ) ;
 		CSVline( title, results ) ;
 	}
+	gsl_spline_free (spline);
     gsl_interp_accel_free (acc);
 }
 
