@@ -58,7 +58,7 @@ Plot of \\(\hat{L}\\,\text{vs}\\,{\theta}\_0\\)
 ## Folded (normalized)
 
 
-\\[d \hat{x}=\sqrt{1-\hat{f}'\^2} d \hat{s}= \frac{\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{2 \sin({\theta}\_0)} d \theta\\]
+\\[d \hat{x}=\sqrt{1-\hat{f}'\^2} d \hat{s}= \frac{\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{2 \sin({\theta}\_0)}\\,d \theta=\frac{\sqrt{\cos(2 \theta)}}{2 \sin({\theta}\_0)}\\,d \theta\\]
 \\[\hat{z}=\hat{f}(\hat{s})=\frac{\cos(\theta)}{2 \sin({\theta}\_0)}-\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
 \\[\hat{y}=\hat{L}-\hat{f}(\hat{s})=\hat{L}-\frac{\cos(\theta)}{2 \sin({\theta}\_0)}+\frac{\cos({\theta}\_0)}{2 \sin({\theta}\_0)}\\]
 
@@ -70,7 +70,7 @@ Our expression for Volume:
 
 Or using \\(\theta\\) parametrically and recognizing that there is symmetry in \\(\pm\theta\\):
 
-\\[V=\frac{8}{2\^3 \sin\^3({\theta}\_0)} \int\_0\^{{\theta}\_0} \lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace 2 \sin({\theta}\_0) \hat{L}-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta\\]
+\\[V=\frac{8}{2\^3 \sin\^3({\theta}\_0)} \int\_0\^{{\theta}\_0} \lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace 2 \sin({\theta}\_0) \hat{L}-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos(2 \theta)}\\,d \theta\\]
 
 The integral can be evaluated numerically, but is not resolvable in elementary functions.
 
@@ -78,13 +78,13 @@ The integral can be evaluated numerically, but is not resolvable in elementary f
 
 We can try to find conditions for maximum volume for arc profiles.
 
-\\[V = \int\_0\^{{\theta}\_0} F(\theta,{\theta}\_0,\hat{L}) d \theta\quad \text{where}\\, F(\theta,{\theta}\_0,\hat{L})=\frac{\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace 2 \sin({\theta}\_0)L-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}}{\sin\^3({\theta}\_0)}\\]
+\\[V = \int\_0\^{{\theta}\_0} F(\theta,{\theta}\_0,\hat{L}) d \theta\quad \text{where}\\, F(\theta,{\theta}\_0,\hat{L})=\frac{\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace \lbrace 2 \sin({\theta}\_0)L-\cos(\theta)+\cos({\theta}\_0)\rbrace\sqrt{\cos(2 \theta)}}{\sin\^3({\theta}\_0)}\\]
 
 ### Length
 
 \\[\frac{\partial V}{\partial \hat{L}}=0=\int\_0\^{{\theta}\_0}\frac{\partial F(\theta,{\theta}\_0,\hat{L})}{\partial \hat{L}}\\,d \theta\\]
-\\[\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^2({\theta}\_0)}\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
-\\[\int\_0\^{{\theta}\_0}\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace\sqrt{\cos\^2(\theta)-sin\^2(\theta)}\\,d \theta=0\\]
+\\[\int\_0\^{{\theta}\_0}\frac{\cos(\theta)-\cos({\theta}\_0)}{sin\^2({\theta}\_0)}\sqrt{\cos(2 \theta)}\\,d \theta=0\\]
+\\[\int\_0\^{{\theta}\_0}\lbrace\cos(\theta)-\cos({\theta}\_0)\rbrace\sqrt{\cos(2 \theta)}\\,d \theta=0\\]
 
 In the range \\(0\leq\theta\leq\pi/4\\) both terms are positive, so the integral is never 0. Indeed:
 \\[\lim\_{\hat{L}\rightarrow\infty} V=\infty\\]
@@ -95,5 +95,5 @@ In the range \\(0\leq\theta\leq\pi/4\\) both terms are positive, so the integral
 The first term is from [integral limit being dependent on \\({\theta}\_0\\)](https://en.wikipedia.org/wiki/Leibniz_integral_rule#General_form:_Differentiation_under_the_integral_sign), but note:
 \\[F({\theta}\_0,{\theta}\_0,\hat{L})=0\\]
 
-\\[\int\_0\^{{\theta}\_0}\frac{\cos\^3({\theta}\_0)+2 \cos({\theta}\_0)-2 \cos(\theta)\lbrace 2  \cos\^2({\theta}\_0)+1\rbrace+3 \cos\^2(\theta) \cos({\theta}\_0)-2 \sin({\theta}\_0)L \lbrace 3 \cos(\theta) \cos({\theta}\_0)+2 \cos\^2({\theta}\_0)+1\rbrace}{\sin\^4({\theta}\_{0})}\sqrt{\cos\^2(\theta)-\sin\^2(\theta)}\\,d \theta=0 
+\\[\int\_0\^{{\theta}\_0}\frac{\cos\^3({\theta}\_0)+2 \cos({\theta}\_0)-2 \cos(\theta)\lbrace 2  \cos\^2({\theta}\_0)+1\rbrace+3 \cos\^2(\theta) \cos({\theta}\_0)-2 \sin({\theta}\_0)L \lbrace 3 \cos(\theta) \cos({\theta}\_0)+2 \cos\^2({\theta}\_0)+1\rbrace}{\sin\^4({\theta}\_{0})}\sqrt{\cos(2 \theta)}\\,d \theta=0 
 \\]

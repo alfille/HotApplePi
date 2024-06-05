@@ -45,7 +45,7 @@ double f_of_theta( double theta, void * params ) {
 
 double dx_of_theta( double theta, void * params ) {
 	struct func_params * p = params ;
-	return .5 * sqrt(abs(gsl_sf_cos(2 * theta))) / p->sin0 ;
+	return .5 * sqrt(abs(gsl_sf_cos(2. * theta))) / p->sin0 ;
 }
 
 double volume_of_theta( double theta, void * params ) {
@@ -76,7 +76,7 @@ double Volume( double theta0, double Lhat ) {
 		&gf, // gsl_function*
 		0, //a
 		theta0, //b
-		.00001, //epsabs
+		.000001, //epsabs
 		0, // epsrel
 		& result,
 		& neval,
@@ -103,7 +103,7 @@ double Width( double theta0 ) {
 		&gf, // gsl_function*
 		0, //a
 		theta0, //b
-		.00001, //epsabs
+		.000001, //epsabs
 		0, // epsrel
 		& result,
 		& neval,
@@ -192,7 +192,7 @@ void CSVheight( void ) {
 	results[0] = 0. ;
 	for ( int i = 1; i <= n_theta ; ++i ) {
 		setParams( theta[i], 0 ) ;
-		results[i] = f_of_theta( 0, (void *) &gParams ) ;
+		results[i] = f_of_theta( 0, (void *) (&gParams) ) ;
 	}
 	CSVline( "Max f(s)", results ) ;
 }
@@ -223,18 +223,26 @@ double X( double theta0, double theta_start, double theta_finish ) {
 
 	gsl_function gf = {
 		.function = &dx_of_theta,
-		.params = (void *) &gParams, 
+		.params = (void *) (&gParams), 
 	} ;
 	
 	int status = gsl_integration_romberg(
 		&gf, // gsl_function*
 		theta_start, //a
 		theta_finish, //b
-		.00001, //epsabs
+		.000001, //epsabs
 		0, // epsrel
 		& result,
 		& neval,
 		GSLW );
+	printf("theta0=%g theta(%g->%g) del(%g)xAvg(%g)=%g actual %g\n",
+		theta0,\
+		theta_start,
+		theta_finish,
+		theta_finish-theta_start,
+		.5*(theta_start+theta_finish),
+		dx_of_theta( .5*(theta_start+theta_finish), (void *)(&gParams) ),
+		result );
 	return result ;
 }
 
@@ -244,16 +252,17 @@ void CSVfolded( void ) {
     gsl_spline *spline = gsl_spline_alloc (gsl_interp_cspline, n_theta+1);
 
 	for ( int a = 1 ; a <= 45 ; ++a ) {
-		double t0 = M_PI_4 * a / 45 ;
+		double theta0 = M_PI_4 * a / 45 ;
 		double x[n_theta+1] ;
 		double f[n_theta+1] ;
-		setParams( t0, 0 );
+		setParams( theta0, 0 );
 		x[0] = 0. ;
-		f[0] = f_of_theta( 0., (void *) &gParams ) ;
-		double dt = t0 / n_theta ;
+		f[0] = f_of_theta( 0., (void *) (&gParams) ) ;
+		double dt = theta0 / n_theta ;
+		printf("dt=%g,%g,%g\n",dt,theta0,M_PI_4);
 		for ( int i = 1; i <= n_theta ; ++i ) {
-			x[i] = x[i-1] + X(t0,(i-1)*dt, i*dt ) ;
-			f[i] = fmax(0.,f_of_theta( (i*dt), (void *) &gParams ));
+			x[i] = x[i-1] + X(theta0,(i-1)*dt, i*dt ) ;
+			f[i] = fmax(0.,f_of_theta( (i*dt), (void *) (&gParams) ));
 			printf("%d\t%g\t%g\n",i,x[i],f[i]);
 		}
 		gsl_spline_init (spline, x, f, n_theta+1);
