@@ -11,7 +11,10 @@
 // gcc arc.c -Wall -lgsl -lm -o arc
 
 int qdegree = 0 ; // show degrees rather than radians
-enum { eVolume, eWidth, eHeight, eFolded, eUnfolded } eShow = eVolume ;
+enum { eVolume, eWidth, eHeight, eFolded, eUnfolded, } eShow = eVolume ;
+
+#define EPSABS .0 // Absolute Error
+#define EPSREL .00001      // Relative Error
 
 struct func_params {
 	double theta0;
@@ -27,6 +30,14 @@ void setParams( double theta0, double Lhat ) {
 	gParams.length = Lhat ;
 }
 
+double Xnormalize( double x ) {
+	return .5 * x / gParams.sin0 ;
+}
+
+double Ynormalize( double x ) {
+	return .5 * x / gParams.sin0 ;
+}
+
 int n_theta = 50 ;
 double * theta = NULL ;
 double * s_vals = NULL ;
@@ -39,18 +50,20 @@ double * length = NULL ;
 gsl_integration_romberg_workspace * GSLW ;
 
 double f_of_theta( double theta, void * params ) {
+	// unnormalized
 	struct func_params * p = params ;
-	return .5 * ( gsl_sf_cos(theta) - p->cos0 ) / p->sin0 ;
+	return gsl_sf_cos(theta) - p->cos0 ;
 }
 
 double dx_of_theta( double theta, void * params ) {
-	struct func_params * p = params ;
-	return .5 * sqrt(abs(gsl_sf_cos(2. * theta))) / p->sin0 ;
+	// unnormalized
+	return sqrt(fabs(gsl_sf_cos(2. * theta))) ;
 }
 
 double volume_of_theta( double theta, void * params ) {
+	// dx unnormalized
 	struct func_params * p = params ;
-	double f = f_of_theta( theta, params ) ;
+	double f = Ynormalize(f_of_theta( theta, params )) ;
 	return 8 * f * (p->length - f) * dx_of_theta( theta, params ) ;
 }
 
@@ -76,12 +89,14 @@ double Volume( double theta0, double Lhat ) {
 		&gf, // gsl_function*
 		0, //a
 		theta0, //b
-		.000001, //epsabs
-		0, // epsrel
+		EPSABS, EPSREL,
 		& result,
 		& neval,
 		GSLW );
-	return result ;
+	if ( status != 0 ) {
+		printf("[%d] Integration status = %d\n",__LINE__,status ) ;
+	}
+	return Xnormalize(result) ;
 }
 
 double Width( double theta0 ) {
@@ -103,12 +118,14 @@ double Width( double theta0 ) {
 		&gf, // gsl_function*
 		0, //a
 		theta0, //b
-		.000001, //epsabs
-		0, // epsrel
+		EPSABS, EPSREL,
 		& result,
 		& neval,
 		GSLW );
-	return result ;
+	if ( status != 0 ) {
+		printf("[%d] Integration status = %d\n",__LINE__,status ) ;
+	}
+	return Xnormalize(result) ;
 }
 
 double * makeXaxis( double limit ) {
@@ -192,7 +209,7 @@ void CSVheight( void ) {
 	results[0] = 0. ;
 	for ( int i = 1; i <= n_theta ; ++i ) {
 		setParams( theta[i], 0 ) ;
-		results[i] = f_of_theta( 0, (void *) (&gParams) ) ;
+		results[i] = Ynormalize( f_of_theta( 0, (void *) (&gParams) ) ) ;
 	}
 	CSVline( "Max f(s)", results ) ;
 }
@@ -200,10 +217,11 @@ void CSVheight( void ) {
 void CSVunfolded( void ) {
 	double results[n_theta+1] ;
 	for ( int a = 1 ; a <= 45 ; ++a ) {
-		double t0 = M_PI_4 * a / 45 ;
-		double norm = 2 * gsl_sf_sin(t0) ;
+		double theta0 = M_PI_4 * a / 45 ;
+		setParams( theta0, 0 ) ;
 		for ( int i = 0; i <= n_theta ; ++i ) {
-			results[i] = (gsl_sf_cos(asin(norm*s_vals[i])) - gsl_sf_cos(t0)) / norm ;
+			double theta = asin( Xnormalize( s_vals[i] ) ) ; 
+			results[i] = Ynormalize( f_of_theta( theta, (void *) (&gParams) ) ) ;
 		}
 		char title[40];
 		snprintf(title, 39, "theta0=%i", a ) ;
@@ -219,7 +237,7 @@ double X( double theta0, double theta_start, double theta_finish ) {
 		return 0 ;
 	}
 
-	setParams( theta0, 0 ) ;
+	// setParams( theta0, 0 ) ; // set prior
 
 	gsl_function gf = {
 		.function = &dx_of_theta,
@@ -230,20 +248,14 @@ double X( double theta0, double theta_start, double theta_finish ) {
 		&gf, // gsl_function*
 		theta_start, //a
 		theta_finish, //b
-		.000001, //epsabs
-		0, // epsrel
+		EPSABS, EPSREL,
 		& result,
 		& neval,
 		GSLW );
-	printf("theta0=%g theta(%g->%g) del(%g)xAvg(%g)=%g actual %g\n",
-		theta0,\
-		theta_start,
-		theta_finish,
-		theta_finish-theta_start,
-		.5*(theta_start+theta_finish),
-		dx_of_theta( .5*(theta_start+theta_finish), (void *)(&gParams) ),
-		result );
-	return result ;
+	if ( status != 0 ) {
+		printf("[%d] Integration status = %d\n",__LINE__,status ) ;
+	}
+	return Xnormalize( result ) ;
 }
 
 void CSVfolded( void ) {
@@ -259,11 +271,11 @@ void CSVfolded( void ) {
 		x[0] = 0. ;
 		f[0] = f_of_theta( 0., (void *) (&gParams) ) ;
 		double dt = theta0 / n_theta ;
-		printf("dt=%g,%g,%g\n",dt,theta0,M_PI_4);
+		//printf("[%d] dt=%g, theta0=%g, pi/4=%g\n",__LINE__,dt,theta0,M_PI_4);
 		for ( int i = 1; i <= n_theta ; ++i ) {
 			x[i] = x[i-1] + X(theta0,(i-1)*dt, i*dt ) ;
-			f[i] = fmax(0.,f_of_theta( (i*dt), (void *) (&gParams) ));
-			printf("%d\t%g\t%g\n",i,x[i],f[i]);
+			f[i] = Ynormalize( fmax(0.,f_of_theta( (i*dt), (void *) (&gParams) )) );
+			//printf("[%d] i=%d\tx=%g\tf=%g\n",__LINE__,i,x[i],f[i]);
 		}
 		gsl_spline_init (spline, x, f, n_theta+1);
 		for ( int i = 0; i <= n_theta ; ++i ) {
@@ -283,7 +295,7 @@ void CSVfolded( void ) {
 }
 
 void help() {
-    printf("arc -- HOt Apple Pi box with circular arc end-tabs\n");
+    printf("arc -- Hot Apple Pi box with circular arc end-tabs\n");
     printf("\toutput in CSV format (comma-separated-values))\n");
     printf("\tby Paul H Alfille 2024 -- MIT Licence\n");
     printf("\tSee https://github.com/alfille/HotApplePi");
