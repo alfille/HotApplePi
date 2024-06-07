@@ -30,12 +30,26 @@ void setParams( double theta0, double Lhat ) {
 	gParams.length = Lhat ;
 }
 
+int gScale = 0 ;
+
 double Xnormalize( double x ) {
 	return .5 * x / gParams.sin0 ;
 }
 
+double DXnormalize( double x ) {
+	if (gScale) {
+		return .5 * x / gsl_pow_2( gParams.sin0 ) ;
+	} else {
+		return .5 * x / gParams.sin0 ;
+	}
+}
+
 double Ynormalize( double x ) {
-	return .5 * x / gParams.sin0 ;
+	if (gScale) {
+		return .5 * x * gParams.cos0 / gsl_pow_2( gParams.sin0 ) ;
+	} else {
+		return .5 * x / gParams.sin0 ;
+	}
 }
 
 int n_theta = 50 ;
@@ -49,22 +63,27 @@ double * length = NULL ;
 
 gsl_integration_romberg_workspace * GSLW ;
 
-double f_of_theta( double theta, void * params ) {
+double f_theta_( double theta, void * params ) {
 	// unnormalized
 	struct func_params * p = params ;
 	return gsl_sf_cos(theta) - p->cos0 ;
 }
 
-double dx_of_theta( double theta, void * params ) {
+double dx_theta_( double theta, void * params ) {
 	// unnormalized
-	return sqrt(fabs(gsl_sf_cos(2. * theta))) ;
+	struct func_params * p = params ;
+	if (gScale) {
+		return sqrt(fabs( gsl_pow_2(gsl_sf_cos(theta)) - gsl_pow_2(p->cos0) )) ;
+	} else {
+		return sqrt(fabs( gsl_sf_cos(2. * theta) )) ;
+	}
 }
 
-double volume_of_theta( double theta, void * params ) {
+double volume_theta_( double theta, void * params ) {
 	// dx unnormalized
 	struct func_params * p = params ;
-	double f = Ynormalize(f_of_theta( theta, params )) ;
-	return 8 * f * (p->length - f) * dx_of_theta( theta, params ) ;
+	double f = Ynormalize(f_theta_( theta, params )) ;
+	return 8 * f * (p->length - f) * dx_theta_( theta, params ) ;
 }
 
 double Volume( double theta0, double Lhat ) {
@@ -76,12 +95,12 @@ double Volume( double theta0, double Lhat ) {
 	}
 
 	setParams( theta0, Lhat ) ;
-	if ( Lhat < f_of_theta( 0., (void *) (&gParams) ) ) {
+	if ( Lhat < f_theta_( 0., (void *) (&gParams) ) ) {
 		return 0 ;
 	}
 	
 	gsl_function gf = {
-		.function = &volume_of_theta,
+		.function = &volume_theta_,
 		.params = (void *) (&gParams) 
 	} ;
 	
@@ -110,7 +129,7 @@ double Width( double theta0 ) {
 	setParams( theta0, 0 ) ;
 
 	gsl_function gf = {
-		.function = &dx_of_theta,
+		.function = &dx_theta_,
 		.params = (void *) (&gParams) 
 	} ;
 	
@@ -125,7 +144,7 @@ double Width( double theta0 ) {
 	if ( status != 0 ) {
 		printf("[%d] Integration status = %d\n",__LINE__,status ) ;
 	}
-	return Xnormalize(result) ;
+	return 2*Xnormalize(result) ;
 }
 
 double * makeXaxis( double limit ) {
@@ -209,24 +228,9 @@ void CSVheight( void ) {
 	results[0] = 0. ;
 	for ( int i = 1; i <= n_theta ; ++i ) {
 		setParams( theta[i], 0 ) ;
-		results[i] = Ynormalize( f_of_theta( 0, (void *) (&gParams) ) ) ;
+		results[i] = Ynormalize( f_theta_( 0, (void *) (&gParams) ) ) ;
 	}
 	CSVline( "Max f(s)", results ) ;
-}
-
-void CSVunfolded( void ) {
-	double results[n_theta+1] ;
-	for ( int a = 1 ; a <= 45 ; ++a ) {
-		double theta0 = M_PI_4 * a / 45 ;
-		setParams( theta0, 0 ) ;
-		for ( int i = 0; i <= n_theta ; ++i ) {
-			double theta = asin( Xnormalize( s_vals[i] ) ) ; 
-			results[i] = Ynormalize( f_of_theta( theta, (void *) (&gParams) ) ) ;
-		}
-		char title[40];
-		snprintf(title, 39, "theta0=%i", a ) ;
-		CSVline( title, results ) ;
-	}
 }
 
 double X( double theta0, double theta_start, double theta_finish ) {
@@ -240,7 +244,7 @@ double X( double theta0, double theta_start, double theta_finish ) {
 	// setParams( theta0, 0 ) ; // set prior
 
 	gsl_function gf = {
-		.function = &dx_of_theta,
+		.function = &dx_theta_,
 		.params = (void *) (&gParams), 
 	} ;
 	
@@ -255,7 +259,39 @@ double X( double theta0, double theta_start, double theta_finish ) {
 	if ( status != 0 ) {
 		printf("[%d] Integration status = %d\n",__LINE__,status ) ;
 	}
-	return Xnormalize( result ) ;
+	return DXnormalize( result ) ;
+}
+
+void CSVunfolded( void ) {
+	double results[n_theta+1] ;
+    gsl_interp_accel *acc = gsl_interp_accel_alloc ();
+    gsl_spline *spline = gsl_spline_alloc (gsl_interp_cspline, n_theta+1);
+
+	for ( int a = 1 ; a <= 45 ; ++a ) {
+		double theta0 = M_PI_4 * a / 45 ;
+		double s[n_theta+1] ;
+		double f[n_theta+1] ;
+		setParams( theta0, 0 );
+		for ( int i = 0; i <= n_theta ; ++i ) {
+			double theta = i * theta0 / n_theta ;
+			s[i] = Xnormalize( gsl_sf_sin(theta) ) ;
+			f[i] = Ynormalize( f_theta_( theta, (void *) (&gParams) ) );
+		}
+		gsl_spline_init (spline, s, f, n_theta+1);
+		for ( int i = 0; i <= n_theta ; ++i ) {
+			if ( s_vals[i] < s[n_theta] ) {
+				results[i] = gsl_spline_eval( spline, s_vals[i], acc ) ;
+			} else {
+				// width shorter
+				results[i] = 0 ;
+			}
+		}
+		char title[40];
+		snprintf(title, 39, "theta0=%i", a ) ;
+		CSVline( title, results ) ;
+	}
+	gsl_spline_free (spline);
+    gsl_interp_accel_free (acc);
 }
 
 void CSVfolded( void ) {
@@ -269,12 +305,12 @@ void CSVfolded( void ) {
 		double f[n_theta+1] ;
 		setParams( theta0, 0 );
 		x[0] = 0. ;
-		f[0] = f_of_theta( 0., (void *) (&gParams) ) ;
+		f[0] = Ynormalize( f_theta_( 0., (void *) (&gParams) ) ) ;
 		double dt = theta0 / n_theta ;
 		//printf("[%d] dt=%g, theta0=%g, pi/4=%g\n",__LINE__,dt,theta0,M_PI_4);
 		for ( int i = 1; i <= n_theta ; ++i ) {
 			x[i] = x[i-1] + X(theta0,(i-1)*dt, i*dt ) ;
-			f[i] = Ynormalize( fmax(0.,f_of_theta( (i*dt), (void *) (&gParams) )) );
+			f[i] = Ynormalize( fmax(0.,f_theta_( (i*dt), (void *) (&gParams) )) );
 			//printf("[%d] i=%d\tx=%g\tf=%g\n",__LINE__,i,x[i],f[i]);
 		}
 		gsl_spline_init (spline, x, f, n_theta+1);
@@ -311,9 +347,7 @@ void help() {
     printf("\t-f\t--folded\tShow folded profile\n");
     printf("\t-u\t--unfolded\tShow unfolded profile\n");
     printf("\t-n%d\t--number\tnumber of angles (default %d)\n",n_theta,n_theta);
-    printf("\t-q\t--seq\tshow full sequences (default off)\n"); 
-    printf("\t-t\t--timelimit \t stop calculation after specified seconds (default none)\n");
-    printf("\t-r\t--range \t increase last preset to this value\n");
+    printf("\t-s\t--scaled\tVertical scaling to maximum slope (default no)\n");
     printf("\t-h\t--help\tthis help\n");
     printf("\nSee https://github.com/alfille/reciprocals for full exposition\n\n");
     exit(1);
@@ -328,8 +362,7 @@ struct option long_options[] =
     {"max"      ,   no_argument,       0, 'm'},
     {"folded"   ,   no_argument,       0, 'f'},
     {"unfolded" ,   no_argument,       0, 'u'},
-    {"timelimit",   required_argument, 0, 't'},       
-    {"range"    ,   required_argument, 0, 'r'},       
+    {"scaled"   ,   no_argument,       0, 's'},
     {"help"     ,   no_argument,       0, 'h'},
     {0          ,   0          ,       0,   0}
 };
@@ -338,7 +371,7 @@ void ParseCommandLine( int argc, char * argv[] ) {
     // Parse command line
     int c;
     int option_index ;
-    while ( (c = getopt_long( argc, argv, "hdvwmn:fu", long_options, &option_index )) != -1 ) {
+    while ( (c = getopt_long( argc, argv, "hdvwmn:fus", long_options, &option_index )) != -1 ) {
         switch (c) {
             case 0:
                 break ;
@@ -365,6 +398,9 @@ void ParseCommandLine( int argc, char * argv[] ) {
 				break ;
             case 'n':
                 n_theta = atoi(optarg);
+                break ;
+            case 's':
+                gScale = 1;
                 break ;
             default:
                 help() ;

@@ -97,3 +97,7 @@ The first term is from [integral limit being dependent on \\({\theta}\_0\\)](htt
 
 \\[\int\_0\^{{\theta}\_0}\frac{\cos\^3({\theta}\_0)+2 \cos({\theta}\_0)-2 \cos(\theta)\lbrace 2  \cos\^2({\theta}\_0)+1\rbrace+3 \cos\^2(\theta) \cos({\theta}\_0)-2 \sin({\theta}\_0)L \lbrace 3 \cos(\theta) \cos({\theta}\_0)+2 \cos\^2({\theta}\_0)+1\rbrace}{\sin\^4({\theta}\_{0})}\sqrt{\cos(2 \theta)}\\,d \theta=0 
 \\]
+
+## Calculated
+
+Given that a closed form solution for the folded arc box doesn't exist, we will use numerical methods.
