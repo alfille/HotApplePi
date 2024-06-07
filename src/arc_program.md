@@ -1,1 +1,53 @@
-# Acr Program
+# Arc Program
+
+```
+arc -- Hot Apple Pi box with circular arc end-tabs
+        output in CSV format (comma-separated-values))
+        by Paul H Alfille 2024 -- MIT Licence
+        See https://alfille.github.io/HotApplePi/arc_program.html
+arc [options] [L1, L2, ...]
+        where L1 L2 are normalized box length
+
+Options
+        -d      --degrees       Show angles in degrees (radians default)
+        -v      --volume        Show folded Volume (default)
+        -w      --width Show folded Width
+        -m      --max   Show folded Maximum height
+        -f      --folded        Show folded profile
+        -u      --unfolded      Show unfolded profile
+        -n50    --number        number of angles (default 50)
+        -s      --scaled        Vertical scaling to maximum slope (default no)
+        -h      --help  this help
+
+See https://github.com/alfille/HotApplePi for full project
+
+```
+
+## Summary
+
+The **arc.c** program generates profiles and graphs for circular arc profiles. It is run from the command line and outputs CSV that can be imported directly into a spreadshhet (e.g. Excel).
+
+## Installation
+
+* Prerequsites
+  * C library and compiler
+  * `sudo apt install build-essential`
+  * [Gnu Scientific Library](gno.org/software/gsl)
+  * `sudo apt install libgsl-dev`
+* Code
+  * [arc.c](https://github.com/alfille/HotApplePi/tree/main/js/arc.c)
+* Compile
+  * `gcc arc.c -Wall -lgsl -lm -o arc`
+  * chmod +x ./arc
+* Run
+  * `./arc -h`
+
+## Example
+
+Generate folded profiles
+
+```
+./arc -f > folded.csv
+```
+
+Then open folded.csv in a spreadsheet.

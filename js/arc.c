@@ -334,7 +334,7 @@ void help() {
     printf("arc -- Hot Apple Pi box with circular arc end-tabs\n");
     printf("\toutput in CSV format (comma-separated-values))\n");
     printf("\tby Paul H Alfille 2024 -- MIT Licence\n");
-    printf("\tSee https://github.com/alfille/HotApplePi");
+    printf("\tSee https://alfille.github.io/HotApplePi/arc_program.html");
     printf("\n");
     printf("arc [options] [L1, L2, ...]\n");
     printf("\twhere L1 L2 are normalized box length\n");
@@ -349,7 +349,7 @@ void help() {
     printf("\t-n%d\t--number\tnumber of angles (default %d)\n",n_theta,n_theta);
     printf("\t-s\t--scaled\tVertical scaling to maximum slope (default no)\n");
     printf("\t-h\t--help\tthis help\n");
-    printf("\nSee https://github.com/alfille/reciprocals for full exposition\n\n");
+    printf("\nSee https://github.com/alfille/HotApplePi for full project\n\n");
     exit(1);
 }
 

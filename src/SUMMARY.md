@@ -18,7 +18,7 @@
   - [Maximum - Approximation](./approach.md)
   - [Maximum - Results](./results.md)
 - [Arc](./arc.md)
-  - [Acr Program](arc_program.md)
+  - [Arc Program](arc_program.md)
   - [Arc Results](arc_results.md)
   - [Arc Scaled](arc_scaled.md)
 - [Project design](./project.md)
