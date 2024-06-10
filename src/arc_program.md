@@ -25,7 +25,7 @@ See https://github.com/alfille/HotApplePi for full project
 
 ## Summary
 
-The **arc.c** program generates profiles and graphs for circular arc profiles. It is run from the command line and outputs CSV that can be imported directly into a spreadsheet (e.g. Excel).
+The **arc.c** program generates profiles and graphs for circular arc profiles. It is run from the command line and outputs CSV that can be imported directly into a spreadshhet (e.g. Excel).
 
 ## Installation
 
@@ -51,26 +51,3 @@ Generate folded profiles
 ```
 
 Then open folded.csv in a spreadsheet.
-![](images/folded.png)
-
-And create a graph
-
-![](images/UnscaledFolded.png)
-
-#nu# Program internals
-
-### Components
-
-* Main with command line parsing
-* Individual functions
-  * f_theta_, dx_theta, volume_theta__
-  * All follow GSL format of variable (theta) and struct with other parameters
-* CSV writers and intermediaries
-
-### Calculations
-
-* Gnu Scientific library for sophisticated canlculations
-* Numerical integration with Romberg
-* Cspline interpolation
-
-The code is open, modifiable, and modestly annotated.

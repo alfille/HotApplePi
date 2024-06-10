@@ -25,7 +25,7 @@ Because \\(F\\) is not an *explicit* function of \\(s\\) we can use the *[Beltra
 Using our formula for \\(F\\):
 
 \\[f\times (L-f) = C\sqrt{1-{f'}\^2}\\]
-\\[1-\frac{f\^2{(L-f)}\^2}{C\^2}={\frac{df}{ds}}\^2\\]
+\\[1-\frac{f\^2{(L-f)}\^2}{C\^2}=\big({\frac{df}{ds}}\big)\^2\\]
 \\[\frac{df}{ds}=\sqrt{1-\frac{f\^2{(L-f)}\^2}{C\^2}}\\]
 
 Not that easy to solve.
@@ -85,17 +85,17 @@ Using:
 
 \\[\frac{df}{ds}=\sqrt{1-\frac{f\^2{(L-f)}\^2}{C\^2}}\\]
 
-We can computer the second derivative:
+We can compute the second derivative:
 
-\\[\frac{{df}\^2}{d{s}\^2}=\frac{f\times(L-f)\times(2f-L)}{C\^2}\\]
+\\[\frac{d\^2 f}{d{s}\^2}=\frac{f\times(L-f)\times(2f-L)}{C\^2}\\]
 
 At the midpoint \\(s=.5\\)
 
-\\[\frac{{df}\^2}{d{s}\^2}\bigg\rvert\_{.5}=\frac{f(.5)\times(L-f(.5))\times(2f(.5)-L)}{{f(.5)}\^2\times(L-f(.5))\^2}\\]
+\\[\frac{d\^2 f}{d{s}\^2}\bigg\rvert\_{.5}=\frac{f(.5)\times(L-f(.5))\times(2f(.5)-L)}{{f(.5)}\^2\times(L-f(.5))\^2}\\]
 
-\\[\frac{{df}\^2}{d{s}\^2}\bigg\rvert\_{.5}=\frac{2f(.5)-L}{{f(.5)}\times(L-f(.5))}\\]
+\\[\frac{d\^2 f}{d{s}\^2}\bigg\rvert\_{.5}=\frac{2f(.5)-L}{{f(.5)}\times(L-f(.5))}\\]
 
-For \\(f(.5)\\) to be a maximum, \\(\frac{{df}\^2}{d{s}\^2}\leq0\\), so
+For \\(f(.5)\\) to be a maximum, \\(\frac{d\^2 f}{d{s}\^2}\leq0\\), so
 
 \\[2 f(.5) - L \leq0\\]
 
