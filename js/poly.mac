@@ -1,0 +1,25 @@
+/* Calculate optimal polynmomial for HotApplePi Box */
+/* See https://github.com/alfille/HotApplePi */
+/* Here curve is centered on s=0, symmetric (even function) */
+/* Satisfies f*(L-f)=C*sqrt(1-f'^2), f the function, L length, C constant */
+/* f'(0)=0, f(-.5)=f(.5)=0 */
+/* Run on maxima: load("poly.mac") */
+
+kill(all);
+c(i):=(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!);
+N:8;
+f:a0+sum(c(2*i)*a[2*i]*s^(2*i),i,1,N);
+df:diff(f,s);
+
+E:f^2*(L-f)^2-a0^2*(L-a0)^2*(1-df^2);
+
+for i:2 step 2 thru N do
+    block (
+      [T,C],
+      display(i),
+      T:taylor(E,s,0,2*N),
+      C:coeff(T,s,i),
+      S[i]:ev(part(solve(C,a[i]),1),factor),
+      E:ev(E,S[i],factor),
+      display(S[i])
+      );
