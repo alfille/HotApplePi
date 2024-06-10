@@ -3,7 +3,7 @@
 /* Here curve is centered on s=0, symmetric (even function) */
 /* Satisfies f*(L-f)=C*sqrt(1-f'^2), f the function, L length, C constant */
 /* f'(0)=0, f(-.5)=f(.5)=0 */
-/* Run on maxima: load("poly.mac") */
+/* Run on maxima: load("./poly.mac") */
 
 kill(all);
 c(i):=(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!);
