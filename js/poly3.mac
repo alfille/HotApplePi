@@ -1,0 +1,55 @@
+/* Calculate optimal polynmomial for HotApplePi Box */
+/* See https://github.com/alfille/HotApplePi */
+/* Here curve is centered on s=0, symmetric (even function) */
+/* Satisfies f*(L-f)=C*sqrt(1-f'^2), f the function, L length, C constant */
+/* f'(0)=0, f(-.5)=f(.5)=0 */
+/* Run on maxima: load("./poly.mac") */
+
+/*
+  Version 2
+  Factor out a common term (-1)^(i/2)*(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!)
+  Also test for an all-zero trivial solution
+*/
+
+kill(all);
+/* Common factor */
+c(i):=(-1)^(i/2)*(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!);
+/* Highest order term */
+N:20;
+/* Sum over even elements */
+f:a0+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
+df:diff(f,s);
+
+E:f^2*(L-f)^2-a0^2*(L-a0)^2*(1-df^2);
+T:taylor(E,s,0,N);
+
+for i:2 step 2 thru N do
+  block (
+    [CO,Sol],
+    CO: coeff( T, s, i ),
+    Sol:solve( CO, a[i] ),
+    if 
+      part(Sol,1,2)=0 
+    then 
+      Sol:solve( CO/a[i], a[i] ), 
+    S[i]:ev(part( Sol,1),factor)
+  ) ;
+
+for i: 2 step 2 thru N do
+  for j: i+2 step 2 thru N do
+	S[j]:ev(S[j],S[i],factor) ;
+
+for i:2 step 2 thru N do display(S[i]) ;
+
+for i: 4 step 2 thru N do
+  block (
+   [X],
+   display(i),
+   X:ev(part(S[i],2)-L^(i-2),factor),
+   display(X)
+   );
+
+F:a0+sum(c(2*i)*part(S[2*i],2)*s^(2*i),i,1,N/2);
+/*
+display(F);
+*/    

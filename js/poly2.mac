@@ -6,30 +6,18 @@
 /* Run on maxima: load("./poly.mac") */
 
 /*
-kill(all);
-c(i):=(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!);
-N:8;
-f:a0+sum(c(2*i)*a[2*i]*s^(2*i),i,1,N);
-df:diff(f,s);
-
-E:f^2*(L-f)^2-a0^2*(L-a0)^2*(1-df^2);
-
-for i:2 step 2 thru N do
-    block (
-      [T,C],
-      display(i),
-      T:taylor(E,s,0,2*N),
-      C:coeff(T,s,i),
-      S[i]:ev(part(solve(C,a[i]),1),factor),
-      E:ev(E,S[i],factor),
-      display(S[i])
-      );
+  Version 2
+  Factor out a common term (-1)^(i/2)*(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!)
+  Also test for an all-zero trivial solution
 */
 
 kill(all);
-c(i):=(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!);
-N:16;
-f:a0+sum(c(2*i)*a[2*i]*s^(2*i),i,1,N);
+/* Common factor */
+c(i):=(-1)^(i/2)*(2*a0-L)/(a0^(i-1)*(a0-L)^(i-1)*i!);
+/* Highest order term */
+N:10;
+/* Sum over even elements */
+f:a0+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
 df:diff(f,s);
 
 E:f^2*(L-f)^2-a0^2*(L-a0)^2*(1-df^2);
@@ -37,9 +25,14 @@ T:taylor(E,s,0,N);
 
 for i:2 step 2 thru N do
   block (
-    [CO],
+    [CO,Sol],
     CO: coeff( T, s, i ),
-    S[i]:ev(part(solve( CO, a[i] ),1),factor)
+    Sol:solve( CO, a[i] ),
+    if 
+      part(Sol,1,2)=0 
+    then 
+      Sol:solve( CO/a[i], a[i] ), 
+    S[i]:ev(part( Sol,1),factor)
   ) ;
 
 for i: 2 step 2 thru N do
