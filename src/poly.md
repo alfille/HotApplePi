@@ -1,0 +1,112 @@
+# Extremal -- Polynomial Solution
+
+## Governing differential equation
+
+From the [optimizing equations](./extremal.md):
+
+Using our formula for \\(F\\):
+
+\\[f\times (L-f) = C\sqrt{1-{f'}\^2}\\]
+
+or
+
+\\[f\^2\times (L-f)\^2 - C\^2\times(1-{f'}\^2)=0\\]
+
+Endpoints: \\[f\_{end}=0\\]
+
+Midpoint: \\[f'\_{mid}=0\\]
+
+From the midpoint constraint:
+
+\\[C=f\_{mid}\times(L-f\_{mid})\\]
+
+## Polynomial
+
+We will choose the interval:
+\\[-1/2\leq s \leq 1/2\\]
+
+which makes the midpoint \\(s=0\\).
+
+The curve is symmetric about the midpoint, i.e. an __even__ function so:
+
+\\[f(s)=a\_0 + a\_2 s\^2 + a\_4 s\^4 + \cdots\\]
+\\[C=a\_0\times(L-a\_0)\\]
+
+## Solution strategy
+
+* Substitute the equation for \\(f,f',C\\) into the Governing equation
+* Rearrange into a polynomial in \\(s\\)
+* Set each coefficient to 0, solving for \\(a\_i,\\quad i>0\\) in terms of \\(a\_0,L\\)
+* Solve \\(a\_0\\) for endpoint constraint
+
+We will use [Maxima](https://maxima.sourceforge.io/) to do the calculations. The actual scripts can be seen in `js/polyX.mac` in the [source code repository](https://github.com/alfille/HotApplePi).
+
+### Naive approach
+
+Using `poly1.mac`
+
+```
+        2 a0 - L
+a  = - ------------- 
+ 2     2 a0 (a0 - L)
+                     2             2
+     (2 a0 - L) (6 a0  - 6 L a0 + L )
+a  = -------------------------------- 
+ 4                3         3
+             24 a0  (a0 - L)
+                         4           3        2   2       3       4
+       (2 a0 - L) (108 a0  - 216 L a0  + 138 L  a0  - 30 L  a0 + L )
+a  = - ------------------------------------------------------------- 
+ 6                                 5         5
+                             720 a0  (a0 - L)
+                         6             5          2   4         3   3
+a  = ((2 a0 - L) (3528 a0  - 10584 L a0  + 11952 L  a0  - 6264 L  a0
+ 8
+                                4   2        5       6            7         7
+                        + 1494 L  a0  - 126 L  a0 + L ))/(40320 a0  (a0 - L) ) 
+                              8              7            2   6
+a   = - ((2 a0 - L) (184464 a0  - 737856 L a0  + 1199664 L  a0
+ 10
+            3   5           4   4           5   3          6   2        7
+ - 1016496 L  a0  + 476820 L  a0  - 120312 L  a0  + 14226 L  a0  - 510 L  a0
+    8              9         9
+ + L ))/(3628800 a0  (a0 - L) ) 
+ ```
+ As can be seen, there is a consistent
+ 
+ \\[\frac{(-1)\^{i/2} (2 a\_0 - L)}{i!\\,a\_0\^{i-1} (a\_0-L)\^{i-1}}\\]
+ 
+ factor in each term, times a polynomial in \\(a\_0,L\\)
+ 
+ ### Second function
+ 
+ Define a second related function \\(g\\) and constant \\(b\_0\\):
+ \\[g(s)=L-f(s)\quad\text{and}\quad b\_0 = L-a\_0\\]
+ 
+ Then
+ 
+ \\[g=L-a\_0-a\_2 s\^2-a\_4 s\^4 - \cdots=b\_0-a\_2 s\^2-a\_4 s\^4 - \cdots\\]
+ \\[g' = -f'\\]
+ 
+ And the Governing equation:
+\\[f\^2 g\^2 - a\_0\^2 b\_0\^2 (1+f'g')=0\\]
+is symmetric in \\(a\_0,b\_0\\) and \\(f,g\\)
+ 
+Working through (`poly5.mac`):
+
+\\[a\_i=\frac{(-1)\^{i/2} (a\_0+b\_0)}{i!\\,a\_0\^{i-1}b\_0\^{i-1}}P\_i,\quad i=2,4,\cdots\\]
+for polynomial \\(P\_i(a\_0,b\_0)\\) 
+
+\\[P\_2=1\\]
+\\[P\_4=b\_0\^2+4\\,a\_0 b\_0+a\_0\^2\\]
+\\[P\_6=b\_0\^4+26\\,a\_0 b\_0\^3+54\\,a\_0\^2b\_0\^2+26\\,a\_0\^3b\_0+a\_0\^4\\]
+\\[P\_8=b\_0\^6+120\\,a\_0 b\_0\^5+879\\,a\_0\^2b\_0\^4+1528\\,a\_0\^3b\_0\^3+879\\,a\_0\^4b\_0\^2+120\\,a\_0\^5b\_0+a\_0\^6\\]
+
+Or just with coefficients:
+\\[P\_2=\lbrace 1 \rbrace\\]
+\\[P\_4=\lbrace 1, 4, 1 \rbrace\\]
+\\[P\_6=\lbrace 1, 26, 54, 26, 1 \rbrace\\]
+\\[P\_8=\lbrace 1, 120, 879, 1528, 879, 120, 1 \rbrace\\]
+\\[P\_{10}=\lbrace 1, 502, 10684, 45610, 70870, 45610, 10684, 502, 1 \rbrace\\]
+\\[P\_{12}=\lbrace 1, 2036, 112413, 1069128, 3430194, 4942920, 3430194, 1069128, 1112413, 2036, 1 \rbrace\\]
+\\[P\_{14}=\lbrace 1, 8178, 1097490, 21859178, 132559119, 353250756, 482923068, 353250756, \cdots \rbrace\\]
