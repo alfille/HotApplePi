@@ -140,10 +140,30 @@ This matches our [earlier analysis](./long.md).
 
 ### Asymptotic -- Small L
 
-Since \\(f\_{max}=f(0)=a\leq L/2\\) 
+Since \\(f\_{max}=f(0)=a\leq L/2\\), let:
 
+\\[a\_0=b\_0=L/2\\]
+\\[a\_i=\frac{(-1)\^{i/2}L}{i!\\,L^{2i-2}/2\^{2i-2}}P\_i(L/2,L/2)=\frac{(-1)\^{i/2} 2\^{2i-2}}{i!\\,L^{2i-3}}P\_i(L/2,L/2)\\]
+\\[a\_i=\frac{(-1)\^{i/2} 2\^{2i-2}}{i!\\,L^{2i-3}}\frac{L\^{i-2}}{2\^{i-2}}p\_i=\frac{(-1)\^{i/2} 2\^i}{i!\\,L^{i-1}}p\_i\\]
 
+Where 
+\\[p\_i=P\_i(1,1)=\text{sum of polynomial coefficients}\\]
 
+\\[{{2\^{ 2 }}\over{ 2 !}}p( 2 )= 4 \\] 
+\\[{{2\^{ 4 }}\over{ 4 !}}p( 4 )= 4 \\] 
+\\[{{2\^{ 6 }}\over{ 6 !}}p( 6 )= {{48}\over{5}} \\] 
+\\[{{2\^{ 8 }}\over{ 8 !}}p( 8 )= {{112}\over{5}} \\] 
+\\[{{2\^{ 10 }}\over{ 10 !}}p( 10 )= {{3904}\over{75}} \\] 
+\\[{{2\^{ 12 }}\over{ 12 !}}p( 12 )= {{9088}\over{75}} \\] 
+\\[{{2\^{ 14 }}\over{ 14 !}}p( 14 )= {{91648}\over{325}} \\] 
+\\[{{2\^{ 16 }}\over{ 16 !}}p( 16 )= {{3199232}\over{4875}} \\] 
+\\[{{2\^{ 18 }}\over{ 18 !}}p( 18 )= {{379710464}\over{248625}} \\] 
+\\[{{2\^{ 20 }}\over{ 20 !}}p( 20 )= {{1472776192}\over{414375}} \\] 
+
+![](images/SmallLCoeff.png)
+
+Unfortunately, this is unbounded for \\(L<5\\) which violates our small L requirement, so \\(a\_0\ll L/2\\)
+		
 ### Coefficients:
 Just with coefficients:
 \\[P\_2=\lbrace 1 \rbrace\\]

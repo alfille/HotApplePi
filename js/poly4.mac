@@ -18,7 +18,7 @@ kill(all);
 /* Common factor */
 c(i):=(-1)^(i/2)*(a0+b0)/(a0^(i-1)*b0^(i-1)*i!);
 /* Highest order term */
-N:40;
+N:20;
 /* Sum over even elements */
 f:a0+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
 df:diff(f,s);
@@ -56,7 +56,22 @@ for i:2 step 2 thru N do
   block (
     print("\\\\[P(",i,")=",tex1(Factors(i)),"\\\\]")
     );
-  
+
+Factors2(i):=append([1],makelist(part(P[i],j,1),j,2,i-2),[1]);
+for i:2 step 2 thru N do
+  block (
+    [S],
+    S:lsum(x,x,Factors2(i)),
+    print("\\\\[p(",i,")=",S,"\\\\]")
+    );
+for i:2 step 2 thru N do
+  block (
+    CVG[i]:lsum(x,x,Factors2(i))*2^i/i!,
+    print("\\\\[{{2\\^{",i,"}}\\over{",i,"!}}p(",i,")=",tex1(CVG[i]),"\\\\]")
+    );
+
+plot2d([discrete,makelist([2*i,CVG[2*i]],i,N/2)],logy);
+
 /*
 F:a0+sum(c(2*i)*part(S[2*i],2)*s^(2*i),i,1,N/2);
 display(F);
