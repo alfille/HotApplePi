@@ -18,7 +18,7 @@ kill(all);
 /* Common factor */
 c(i):=(-1)^(i/2)*(a0+b0)/(a0^(i-1)*b0^(i-1)*i!);
 /* Highest order term */
-N:20;
+N:40;
 /* Sum over even elements */
 f:a0+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
 df:diff(f,s);
@@ -47,8 +47,17 @@ for i:2 step 2 thru N do
     P[i]:part(S[i],2),
     display(P[i]) 
     );
+    
+infaclim:false;
+factorflag:true;
 
-F:a0+sum(c(2*i)*part(S[2*i],2)*s^(2*i),i,1,N/2);
+Factors(i):=append([1],makelist(factor(part(P[i],j,1)),j,2,i/2));
+for i:2 step 2 thru N do
+  block (
+    print("\\\\[P(",i,")=",tex1(Factors(i)),"\\\\]")
+    );
+  
 /*
+F:a0+sum(c(2*i)*part(S[2*i],2)*s^(2*i),i,1,N/2);
 display(F);
 */    
