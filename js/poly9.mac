@@ -1,0 +1,75 @@
+/* Calculate optimal polynmomial for HotApplePi Box */
+/* See https://github.com/alfille/HotApplePi */
+/* Here curve is centered on s=0, symmetric (even function) */
+/* Satisfies f*(L-f)=C*sqrt(1-f'^2), f the function, L length, C constant */
+/* f'(0)=0, f(-.5)=f(.5)=0 */
+/* Run on maxima: load("./poly.mac") */
+
+/*
+  Version 9
+  Add factor f(s)=(w^2-s^2)g(s)
+*/
+
+kill(all);
+/* Common factor */
+/*
+c(i):=(-1)^(i/2)*(a0+b0)/(a0^(i-1)*b0^(i-1)*i!);
+*/
+c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(alpha*w^2-1)^(i-1)*i!);
+/* Highest order term */
+N:10;
+/* Sum over even elements */
+g:alpha*L+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
+dg:diff(g,s);
+f:(w^2-s^2)*g;
+df:(w^2-s^2)*dg-2*s*g;
+
+gw:ev(g,s=w);
+
+f0:ev(f,s=0),factor;
+dfw:-2*w*gw;
+
+C:f0*(L-f0);
+
+E:f^2*(L-f)^2-C^2*(1-df^2);
+T:taylor(E,s,0,N);
+
+for i:2 step 2 thru N do
+  block (
+    [CO,Sol],
+    CO: coeff( T, s, i ),
+    Sol:solve( CO, a[i] ),
+    if 
+      part(Sol,1,2)=0 
+    then 
+      Sol:solve( CO/a[i], a[i] ), 
+    S[i]:ev(part( Sol,1),factor)
+  ) ;
+
+for i: 2 step 2 thru N do
+  for j: i+2 step 2 thru N do
+	S[j]:ev(S[j],S[i],factor) ;
+
+F:ev(f,w=1/2);
+DFW:ev(dfw+1,w=1/2);
+for i:2 step 2 thru N do
+  block (
+    F:ev(F,S[i],w=1/2,factor),
+    DFW:ev(DFW,S[i],w=1/2,factor)
+  );
+
+display(F);
+display(DFW);
+
+LL:[.1,.2,.5,.75,1,2];
+
+A:makelist(allroots(ev(part(DFW,1,1),L=l)),l,LL);
+display(A);
+AA:makelist(a,a,A);
+display(AA);
+
+plot2d(makelist(ev(f,s=0,w=1/2,L=l),l,LL),[alpha,0,.5]);
+
+/*
+display(F);
+*/    
