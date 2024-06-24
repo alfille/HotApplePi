@@ -14,16 +14,19 @@ kill(all);
 /* Common factor */
 c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(alpha*w^2-1)^(i-1)*i!);
 
-	/* Highest order term */
-N:30;
-/* Sum over even elements */
+/* Highest order term */ 
+N:10;
+
 /* g function */
+/* Sum over even elements */
 g:alpha*L+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
 dg:diff(g,s);
+ddg:diff(dg,s);
 
 /* f function */
 f:(w^2-s^2)*g;
 df:(w^2-s^2)*dg-2*s*g;
+ddf:(w^2-s^2)*ddg-4*s*dg-2*g;
 
 /* At midpoint */
 g0:ev(g,s=0,factor);
@@ -60,30 +63,29 @@ for i: 2 step 2 thru N do
 
 F:ev(f,w=1/2);
 DFW:ev(dfw+1,w=1/2);
+DDF0:ev(ddf,w=1/2,s=0);
 for i:2 step 2 thru N do
   block (
     F:ev(F,S[i],w=1/2,factor),
-    DFW:ev(DFW,S[i],w=1/2,factor)
+    DFW:ev(DFW,S[i],w=1/2,factor),
+    DDF0:ev(DFW,S[i],w=1/2,factor)
   );
-
-display(F);
-display(DFW);
 
 LL:[0.01,0.02,0.05,0.1,0.2,0.5,0.7,0.8,0.9,1,1.1,1.2,1.5,2,5,10,20,50];
 
 A:makelist(
 	sublist(map(rhs,bfallroots(ev(part(DFW,1,1),L=l))),numberp)
 	,l,LL);
-display(A);
-alpha_max:rhs(solve(f0-L/2,alpha)[1]),w=1/2;
+alpha_max:min(ev(rhs(solve(f0-L/2,alpha)[1]),w=1/2),ev(1/w^2,w=1/2));
 display(alpha_max);
+
 AA:makelist(sublist(a,lambda([x],is((x>0.) and (x<alpha_max)))),a,A);
+
+AA:makelist(lmax(sublist(AA[i],lambda([x],is(ev(DDF0,alpha=x,L=LL[i])<=0)))),i,1,length(LL));
 display(AA);
+
+plot2d(makelist(ev(F,alpha=AA[i],L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,lmax(LL)/2],cons(legend,map(string,LL)));
+
 /*
-plot2d([discrete,makelist([LL[i],AA[i]],i,1,length(LL))],logx,[xlabel,"L"],[ylabel,"alpha"]);
-*/
-
-plot2d(makelist(ev(F,alpha=AA[i],L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,50],cons(legend,map(string,LL)));
-
 display(F);
 */    
