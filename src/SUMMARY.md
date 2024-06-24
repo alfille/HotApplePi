@@ -14,6 +14,7 @@
     - [Extremal -- Short Length](./short.md)
     - [Extremal -- Comparison](./compare.md)
     - [Extremal -- Polynomial Solution](./poly.md)
+    - [Extremal -- Polynomial Solution2](./poly2.md)
 - [Line Segments](./segments.md)
   - [Maximum - Equations](./seg_max.md)
   - [Maximum - Approximation](./approach.md)
