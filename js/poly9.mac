@@ -15,7 +15,7 @@ kill(all);
 c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(alpha*w^2-1)^(i-1)*i!);
 
 /* Highest order term */ 
-N:10;
+N:30;
 
 /* g function */
 /* Sum over even elements */
@@ -84,7 +84,7 @@ AA:makelist(sublist(a,lambda([x],is((x>0.) and (x<alpha_max)))),a,A);
 AA:makelist(lmax(sublist(AA[i],lambda([x],is(ev(DDF0,alpha=x,L=LL[i])<=0)))),i,1,length(LL));
 display(AA);
 
-plot2d(makelist(ev(F,alpha=AA[i],L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,lmax(LL)/2],cons(legend,map(string,LL)));
+plot2d(makelist(ev(F,alpha=AA[i],L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,.4],cons(legend,map(string,LL)));
 
 /*
 display(F);
