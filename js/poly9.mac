@@ -12,14 +12,14 @@
 
 kill(all);
 /* Common factor */
-c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(alpha*w^2-1)^(i-1)*i!);
+c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(1-alpha)^(i-1)*i!);
 
 /* Highest order term */ 
-N:30;
+N:10;
 
 /* g function */
 /* Sum over even elements */
-g:alpha*L+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
+g:alpha*L/w^2+sum(c(2*k)*a[2*k]*s^(2*k),k,1,N/2);
 dg:diff(g,s);
 ddg:diff(dg,s);
 
@@ -61,6 +61,9 @@ for i: 2 step 2 thru N do
   for j: i+2 step 2 thru N do
 	S[j]:ev(S[j],S[i],factor) ;
 
+for i:0 step 2 thru N do
+  factor(display(S[i]));
+
 F:ev(f,w=1/2);
 DFW:ev(dfw+1,w=1/2);
 DDF0:ev(ddf,w=1/2,s=0);
@@ -70,8 +73,10 @@ for i:2 step 2 thru N do
     DFW:ev(DFW,S[i],w=1/2,factor),
     DDF0:ev(DFW,S[i],w=1/2,factor)
   );
-
+/*
 LL:[0.01,0.02,0.05,0.1,0.2,0.5,0.7,0.8,0.9,1,1.1,1.2,1.5,2,5,10,20,50];
+*/
+LL:[1,1.1,1.2,1.5,2,5,10,20,50];
 
 A:makelist(
 	sublist(map(rhs,bfallroots(ev(part(DFW,1,1),L=l))),numberp)
