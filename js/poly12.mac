@@ -1,0 +1,91 @@
+/* Calculate optimal polynmomial for HotApplePi Box */
+/* See https://github.com/alfille/HotApplePi */
+/* Here curve is centered on s=0, symmetric (even function) */
+/* Satisfies f*(L-f)=C*sqrt(1-f'^2), f the function, L length, C constant */
+/* f'(0)=0, f(-.5)=f(.5)=0 */
+/* Run on maxima: load("./poly.mac") */
+
+/*
+  Version 13
+  Add factor use t=w^2-s^2 at the new polynomial variable
+  Use original equation rather than squareroot free.
+*/
+
+kill(all);
+/* Common factor */
+c(i):=1;
+
+/* Highest order term */ 
+N:3;
+
+
+/* f function */
+f:sum(a[i]*c(i)*t^i,i,1,N);
+df:-2*sqrt(w^2-t)*diff(f,t),w=1/2;
+ddf:-2*sqrt(w^2-t)*diff(df,t),w=1/2factor;
+
+/* At midpoint s=0,t=w^2 */
+f0:f,t=w^2,w=1/2,factor;
+df0:df,t=w^2,w=1/2,factor;
+ddf0:ddf,t=w^2,w=1/2,factor;
+
+/* at endpoint */
+fw:f,t=0,factor;
+dfw:df,t=0,factor;
+
+C:f0*(L-f0);
+
+/* endpoint slope known */
+E:f*(L-f)-C*sqrt(1-df^2);
+T:taylor(E,t,0,N);
+
+for i:1 thru N do
+  block (
+    [CO,Sol],
+    CO: coeff( T, t, i ),
+    display(i),
+    if 
+      i=1
+    then 
+      Sol:solve( dfw+1, a[i] )
+    else
+	  Sol:solve( CO, a[i] ),
+    print("# solutions=",length(Sol)),
+    S[i]:ev(part( Sol,1),factor)
+  ) ;
+print("backsolve");
+for i: 1 thru N do
+  for j: i+1 thru N do
+	S[j]:ev(S[j],S[i],factor) ;
+print("display");
+for i:0 step 2 thru N do
+  factor(display(S[i]));
+
+F:ev(f,w=1/2);
+for i:2 step 2 thru N do
+  block (
+    F:ev(F,S[i],w=1/2,factor)
+  );
+/*
+LL:[0.01,0.02,0.05,0.1,0.2,0.5,0.7,0.8,0.9,1,1.1,1.2,1.5,2,5,10,20,50];
+*/
+LL:[1,1.5,50];
+
+A:makelist(
+	sublist(map(rhs,bfallroots(ev(part(DFW,1,1),L=l))),numberp)
+	,l,LL);
+alpha_max:min(ev(rhs(solve(f0-L/2,alpha)[1]),w=1/2),ev(1/w^2,w=1/2));
+display(alpha_max);
+
+AA:makelist(sublist(a,lambda([x],is((x>0.) and (x<alpha_max)))),a,A);
+AAA:makelist(sublist(AA[i],lambda([x],is(ev(DDF0,alpha=x,L=LL[i])<=0))),i,1,length(LL));
+AA:makelist(lmax(sublist(AA[i],lambda([x],is(ev(DDF0,alpha=x,L=LL[i])<=0)))),i,1,length(LL));
+display(AA);
+/*
+plot2d(makelist(ev(F,alpha=AA[i],L=LL[i]),i,1,length(LL)),[s,0,.5],[y,-.2,.4],cons(legend,map(string,LL)));
+*/
+plot2d(makelist(ev(F,alpha=AAA[2][i],L=LL[2]),i,1,length(AAA[2])),[s,0,.5],[y,-.2,.4],cons(legend,map(string,AAA[2])));
+
+/*
+display(F);
+*/    
