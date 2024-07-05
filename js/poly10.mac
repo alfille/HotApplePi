@@ -18,7 +18,7 @@ c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(1-alpha)^(i-1)*i!);
 c(i):=1;
 
 /* Highest order term */ 
-N:5;
+N:6;
 
 /* Assumptions */
 assume(s>=0, L>0, C>0, f0>0, df<=0 );
@@ -37,7 +37,15 @@ dfw:df,s=1/2,factor;
 
 C:f0*(L-f0);
 
+/* Choose one of these: */
+/*   Avoid SQRT */
+/*
 E:f^2*(L-f)^2-C^2*(1-df^2),expand;
+*/
+/*   Avoid squaring */
+EE:f*(L-f)-C*taylor(sqrt(1-df^2),s,0,2*N-2),expand;
+/* End of choice */
+
 print("calc E");
 
 AllSolutions:[];
@@ -61,7 +69,6 @@ ThisSolve( E, i, S ) :=
 
 	/* Only real solutions */
 	Solution:sublist(Solution,lambda( [x],is(imagpart(rhs(x)=0)))),
-	print("Number of solutions",length(Solution)),
 	if 
 		(length(Solution)>0) and (lhs(Solution[1]) # rhs(Solution[1]))
 	then
@@ -76,11 +83,15 @@ ThisSolve( E, 2, [] );
 print("length of solutions",length(AllSolutions));
 display(AllSolutions);
 
-F:ev(f,w=1/2);
 
 LL:[0.01,0.02,0.05,0.1,0.2,0.5,0.7,0.8,0.9,1,1.1,1.2,1.5,2,5,10,20,50];
 
-plot2d(makelist(ev(F,L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,.4],cons(legend,map(string,LL)));
+for sol in AllSolutions do
+	body (
+		[F:ev(f,sol,factor)],
+		plot2d(makelist(ev(F,L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,.4],cons(legend,map(string,LL))),
+		break(sol)
+	);
 
 /*
 display(F);
