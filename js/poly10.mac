@@ -18,13 +18,13 @@ c(i):=1/(alpha^(i-1)*L^(i-1)*w^(2*i)*(1-alpha)^(i-1)*i!);
 c(i):=1;
 
 /* Highest order term */ 
-N:4;
+N:5;
 
 /* Assumptions */
-assume(w>0,s>=0, L>0, C>0, f0>0, df<=0 );
+assume(s>=0, L>0, C>0, f0>0, df<=0 );
 
 /* f function */
-f:1/(2*w)*(w^2-s^2)+sum(a[i]*c(i)*(w^2-s^2)^i,i,2,N);
+f:1/(2*w)*(w^2-s^2)+sum(a[i]*c(i)*(w^2-s^2)^i,i,2,N),w=1/2;
 df:diff(f,s),factor;
 ddf:diff(df,s),factor;
 
@@ -33,61 +33,49 @@ f0:ev(f,s=0,factor);
 ddf0:ev(ddf,s=0,factor);
 
 /* At endpoint */
-dfw:df,s=w,factor;
+dfw:df,s=1/2,factor;
 
 C:f0*(L-f0);
 
 E:f^2*(L-f)^2-C^2*(1-df^2),expand;
 print("calc E");
-/*
-for i:2 thru N do
-  block (
-    [COEFF,Solution],
-    display(i),
-    COEFF: coeff( taylor(E,s,0,2*i-2), s, 2*i-2 ),
-    Solution:solve( COEFF, a[i] ),
-    /* Only real solutions */
-    Solution:sublist(Solution,lambda( [x],is(imagpart(rhs(x)=0)))),
-    print("# solutions",length(Solution)),
-    if length(Solution)>1 then
-      Solution:sublist(Solution,lambda( [x],is(diff(rhs(x),L)#0))),
-    print("# solutions",length(Solution)),
-    for j:1 thru length(Solution) do
-      print(Solution[j]),
-    S[i]:ev(Solution[1],factor),
-    if lsh(S[i])=rhs(S[i]) then
-      display(Solution),
-    E:ev(E,S[i],expand,factor)
-  ) ;
-*/
+
+AllSolutions:[];
+
 /* Solve one level */
 ThisSolve( E, i, S ) :=
   block(
     [COEFF, Solution],
     if 
-      i > N
+		i > N
     then
-      return(S),
-    display(i),
-    COEFF: coeff( taylor(E,s,0,2*i-2), s, 2*i-2 ),
-    Solution:solve( COEFF, a[i] ),
-    /* Only real solutions */
-    Solution:sublist(Solution,lambda( [x],is(imagpart(rhs(x)=0)))),
-    print("Number of solutions",length(Solution)),
-    if 
-      lhs(Solution[1]) = rhs(Solution[1])
-    then
-      return([]),
-    map( 
-      lambda( [sol], ThisSolve( ev(E,sol,expand,factor), i+1, append(S,[sol]) ) ),
-      Solution
-      )
-      );  
-      
-print("defined");
-AllSolutions:ThisSolve( E, 2, [] );
+		( AllSolutions:append(AllSolutions,[S]) , return() ),
+
+	display(i,S),
+	COEFF: ratcoeff( E, s, 2*i-2 ),
+	Solution:solve( COEFF, a[i] ),
+	if
+		not listp(Solution)
+	then
+		( print("Bad solution",Solution,"from",COEFF) , return() ),
+
+	/* Only real solutions */
+	Solution:sublist(Solution,lambda( [x],is(imagpart(rhs(x)=0)))),
+	print("Number of solutions",length(Solution)),
+	if 
+		(length(Solution)>0) and (lhs(Solution[1]) # rhs(Solution[1]))
+	then
+		map( 
+		lambda( [sol], ThisSolve( ev(E,sol,expand,factor), i+1, append(S,[sol]) ) ),
+		Solution
+		)
+  );  
+
+ThisSolve( E, 2, [] );
+
 print("length of solutions",length(AllSolutions));
 display(AllSolutions);
+
 F:ev(f,w=1/2);
 
 LL:[0.01,0.02,0.05,0.1,0.2,0.5,0.7,0.8,0.9,1,1.1,1.2,1.5,2,5,10,20,50];
