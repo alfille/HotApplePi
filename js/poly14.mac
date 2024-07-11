@@ -1,0 +1,130 @@
+/* Calculate optimal polynmomial for HotApplePi Box */
+/* See https://github.com/alfille/HotApplePi */
+/* Here curve is centered on s=0, symmetric (even function) */
+/* Satisfies f*(L-f)=C*sqrt(1-f'^2), f the function, L length, C constant */
+/* f'(0)=0, f(-.5)=f(.5)=0 */
+/* Run oprint("calc E");
+n maxima: load("./poly.mac") */
+
+/*
+  Version 14
+  cosines
+  alternating zero
+*/
+
+kill(all);
+/* Common factor */
+c(i):=1;
+
+/* Highest order term */ 
+N:3;
+
+/* Assumptions */
+assume(s>=0, L>0, C>0, f0>0, df<=0 );
+
+w:1/2;
+
+/* f function */
+f:sum(a[i]*cos((s/w)*(%pi/2)*(2*i-1)),i,1,N);
+df:diff(f,s),factor;
+ddf:diff(df,s),factor;
+
+/* At midpoint */
+f0:ev(f,s=0,factor);
+ddf0:ev(ddf,s=0,factor);
+
+/* At endpoint */
+dfw:df,s=w,factor;
+
+C:f0*(L-f0);
+
+/* Choose one of these: */
+/*   Avoid SQRT */
+/*
+E:f^2*(L-f)^2-C^2*(1-df^2),expand;
+*/
+/*   Avoid squaring */
+E:f*(L-f)-C*sqrt(1-df^2),expand;
+/* End of choice */
+
+print("calc E");
+
+AllSolutions:[];
+
+ThisSolve_first() :=
+	block(
+		[sol],
+		sol:solve(dfw+1,a[1]),
+		display(a[1]),
+		ThisSolve_even( ev(E,sol,factor), 2, [sol] )
+		);
+
+/* Solve one level */
+ThisSolve_even( E, i, S ) :=
+  block(
+    [Solution],
+    if 
+		i > N
+    then
+		( AllSolutions:append(AllSolutions,[S]) , return() ),
+
+	display(i,S),
+	Solution:solve( ev(E,s=w/(2*i+1)), a[i] ),
+	if
+		(not listp(Solution)) or (length(Solution)=0)
+	then
+		( print("Bad solution",Solution,"from",E) , return() ),
+
+	if 
+		(length(Solution)>0) and (lhs(Solution[1]) # rhs(Solution[1]))
+	then
+		map( 
+		lambda( [sol], ThisSolve_odd( ev(E,sol,factor), i+1, append(S,[sol]) ) ),
+		Solution
+		)
+  );  
+
+ThisSolve_odd( E, i, S ) :=
+  block(
+    [Solution],
+    if 
+		i > N
+    then
+		( AllSolutions:append(AllSolutions,[S]) , return() ),
+
+	display(i,S),
+	Solution:solve( ev(E,s=w/(2*i-1)), a[i] ),
+	if
+		(not listp(Solution)) or (length(Solution)=0)
+	then
+		( print("Bad solution",Solution,"from",E) , return() ),
+
+	if 
+		(length(Solution)>0) and (lhs(Solution[1]) # rhs(Solution[1]))
+	then
+		map( 
+		lambda( [sol], ThisSolve_even( ev(E,sol,factor), i+1, append(S,[sol]) ) ),
+		Solution
+		)
+  );  
+
+ThisSolve_first();
+
+print("length of solutions",length(AllSolutions));
+display(AllSolutions);
+
+/*
+LL:[0.01,0.02,0.05,0.1,0.2,0.5,0.7,0.8,0.9,1,1.1,1.2,1.5,2,5,10,20,50];
+*/
+LL:[0.01,0.1,2,20];
+
+for sol in AllSolutions do
+	body (
+		[F:ev(f,sol,factor)],
+		plot2d(makelist(ev(F,L=LL[i]),i,1,length(LL)),[s,0,.5],[y,0,.4],cons(legend,map(string,LL))),
+		break(sol)
+	);
+
+/*
+display(F);
+*/    
